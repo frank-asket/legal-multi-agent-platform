@@ -1,54 +1,48 @@
 import { ContactCard } from "@/components/ContactCard";
 import { Footer } from "@/components/Footer";
 import { InquiryConsole } from "@/components/InquiryConsole";
-import { Navbar } from "@/components/Navbar";
 import { QuickStartStrip } from "@/components/QuickStartStrip";
+import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
+import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import { DashboardUserMenu } from "@/components/dashboard/DashboardUserMenu";
 
 export default function DashboardPage() {
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen bg-slate-50">
-        <div className="border-b border-slate-200 bg-white">
-          <div className="mx-auto max-w-6xl px-4 py-10 sm:px-5 md:px-6">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Workspace
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#0c0f14] sm:text-4xl">
-              Legal operations dashboard
-            </h1>
-            <p className="mt-3 max-w-2xl text-pretty text-slate-600">
-              Run the collaborative multi-agent loop: define objectives, upload documents,
-              and review grounded analysis from researcher, counsel, and auditor agents—with
-              citations you can verify interactively.
-            </p>
-          </div>
-        </div>
+    <div className="min-h-screen bg-[#eef0f3]">
+      <DashboardSidebar />
+      <DashboardUserMenu />
+      <div className="lg:pl-60">
+        <DashboardOverview />
 
         <section
-          className="relative bg-white py-14 sm:py-16 md:py-24"
+          className="mx-auto max-w-[1400px] border-t border-slate-200/80 bg-white px-4 py-14 sm:px-5 md:px-8"
           id="consultation"
           aria-label="Multi-agent consultation"
         >
-          <div
-            className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-slate-50/80 to-transparent"
-            aria-hidden
-          />
-          <div className="relative mx-auto max-w-6xl px-4 sm:px-5 md:px-6">
-            <QuickStartStrip />
-            <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-14 xl:gap-16 lg:items-start">
-              <div className="order-2 lg:order-none">
-                <ContactCard />
-              </div>
-              <div className="order-1 lg:order-none">
-                <InquiryConsole />
-              </div>
+          <div className="mb-8">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Agent console
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[#0c0f14]">
+              Collaborative legal intelligence
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm text-slate-600">
+              Run objectives against your documents: librarian, researcher, counsel, and auditor agents with interactive verification.
+            </p>
+          </div>
+          <QuickStartStrip />
+          <div className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-14 xl:gap-16 lg:items-start">
+            <div className="order-2 lg:order-none">
+              <ContactCard />
+            </div>
+            <div className="order-1 lg:order-none">
+              <InquiryConsole />
             </div>
           </div>
         </section>
 
         <Footer />
-      </main>
-    </>
+      </div>
+    </div>
   );
 }

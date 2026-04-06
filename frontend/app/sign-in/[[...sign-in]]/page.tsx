@@ -11,7 +11,12 @@ export default function SignInPage() {
         Back to Legal Intel
       </Link>
       <SignIn
+        routing="path"
+        path="/sign-in"
+        signUpUrl="/sign-up"
         forceRedirectUrl="/dashboard"
+        signUpForceRedirectUrl="/dashboard"
+        signUpFallbackRedirectUrl="/dashboard"
         appearance={{
           elements: {
             formButtonPrimary: "bg-[#0c0f14] hover:bg-slate-800",
