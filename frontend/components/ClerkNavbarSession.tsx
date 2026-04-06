@@ -16,6 +16,12 @@ export function ClerkNavbarSession({
           <span className="mx-2 hidden h-6 w-px bg-white/15 md:block" aria-hidden />
           <div className="flex items-center gap-2">
             <Link
+              href="/dashboard"
+              className="rounded-full px-3 py-2 text-sm text-white/85 transition hover:bg-white/10 hover:text-white"
+            >
+              Dashboard
+            </Link>
+            <Link
               href="/account"
               className="rounded-full px-3 py-2 text-sm text-white/85 transition hover:bg-white/10 hover:text-white"
             >
@@ -35,6 +41,12 @@ export function ClerkNavbarSession({
             Account
           </p>
           <div className="flex flex-col gap-3">
+            <Link
+              href="/dashboard"
+              className="flex items-center rounded-xl py-3 pl-1 text-white/90"
+            >
+              Dashboard
+            </Link>
             <Link
               href="/account"
               className="flex items-center rounded-xl py-3 pl-1 text-white/90"

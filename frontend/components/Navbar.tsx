@@ -13,6 +13,7 @@ import {
   Scale,
   X,
 } from "lucide-react";
+import { SignedOut } from "@clerk/nextjs";
 import { ClerkNavbarSession } from "@/components/ClerkNavbarSession";
 import { apiDocsUrl } from "@/lib/api";
 
@@ -64,15 +65,17 @@ export function Navbar() {
           <ClerkNavbarSession variant="desktop" />
         </nav>
 
-        <div className="hidden md:flex md:items-center md:gap-2">
-          <Link
-            href="/sign-up"
-            className="group inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-[#0c0f14] shadow-md shadow-black/20 transition duration-300 hover:-translate-y-px hover:bg-slate-100 hover:shadow-lg active:translate-y-0"
-          >
-            Get started
-            <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </Link>
-        </div>
+        <SignedOut>
+          <div className="hidden md:flex md:items-center md:gap-2">
+            <Link
+              href="/sign-up"
+              className="group inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-[#0c0f14] shadow-md shadow-black/20 transition duration-300 hover:-translate-y-px hover:bg-slate-100 hover:shadow-lg active:translate-y-0"
+            >
+              Get started
+              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+          </div>
+        </SignedOut>
 
         <button
           type="button"
@@ -119,14 +122,16 @@ export function Navbar() {
                 API docs
               </a>
               <ClerkNavbarSession variant="mobile" />
-              <Link
-                href="/sign-up"
-                className="mt-4 flex items-center justify-center gap-2 rounded-full bg-white py-3.5 text-sm font-semibold text-[#0c0f14] shadow-lg transition active:scale-[0.99]"
-                onClick={() => setOpen(false)}
-              >
-                Get started
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
+              <SignedOut>
+                <Link
+                  href="/sign-up"
+                  className="mt-4 flex items-center justify-center gap-2 rounded-full bg-white py-3.5 text-sm font-semibold text-[#0c0f14] shadow-lg transition active:scale-[0.99]"
+                  onClick={() => setOpen(false)}
+                >
+                  Get started
+                  <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </SignedOut>
             </div>
           </motion.div>
         ) : null}

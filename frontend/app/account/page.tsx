@@ -13,12 +13,20 @@ export default function AccountPage() {
           >
             LEGAL INTEL
           </Link>
-          <Link
-            href="/#consultation"
-            className="text-sm text-slate-600 underline-offset-4 hover:text-[#0c0f14] hover:underline"
-          >
-            Consultation
-          </Link>
+          <div className="flex items-center gap-6">
+            <Link
+              href="/dashboard"
+              className="text-sm text-slate-600 underline-offset-4 hover:text-[#0c0f14] hover:underline"
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/dashboard#consultation"
+              className="text-sm text-slate-600 underline-offset-4 hover:text-[#0c0f14] hover:underline"
+            >
+              Consultation
+            </Link>
+          </div>
         </div>
       </header>
       <main className="mx-auto max-w-4xl space-y-10 px-4 py-10 sm:px-6">

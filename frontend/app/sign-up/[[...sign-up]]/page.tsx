@@ -11,6 +11,7 @@ export default function SignUpPage() {
         Back to Legal Intel
       </Link>
       <SignUp
+        forceRedirectUrl="/dashboard"
         appearance={{
           elements: {
             formButtonPrimary: "bg-[#0c0f14] hover:bg-slate-800",
