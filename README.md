@@ -101,11 +101,12 @@ Open **`http://localhost:3000`**. The app calls the API at **`NEXT_PUBLIC_API_UR
 
 Put **`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`** and **`CLERK_SECRET_KEY`** in **`frontend/.env.local`** (see **`frontend/.env.example`**). Do not commit real keys; GitHub push protection may reject commits that contain development key material resembling other vendors’ test credentials.
 
-**GitHub Actions:** add the same two variables as [repository secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) named **`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`** and **`CLERK_SECRET_KEY`** so the **frontend** CI job can run **`next build`**.
+**GitHub Actions:** add **`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`** and **`CLERK_SECRET_KEY`** as [repository secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) so the **frontend** CI job can run **`next build`**. You do not need **`CLERK_ENCRYPTION_KEY`** unless you use Clerk’s advanced middleware dynamic-key setup; with a normal secret key the SDK encrypts request data using that secret.
 
 If **`API_KEYS`** is set on the API, paste a key in the form (stored in **`sessionStorage`** only). Browsers cannot send **`X-API-Key`** on WebSocket handshakes, so the UI uses **`?api_key=`** on the socket URL — prefer **WSS** behind TLS in production.
 
-**Docker:** add **`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`** and **`CLERK_SECRET_KEY`** to the repo root **`.env`** (Compose substitutes them into the **web** image build). Then **`docker compose up --build`** starts **API** on **8010** and **web** on **3000** (see **`frontend/Dockerfile`**).
+**Docker:** add **`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`** and **`CLERK_SECRET_KEY`** to the repo root **`.env`**. Compose passes the publishable key as a build arg and mounts **`CLERK_SECRET_KEY`** as a [BuildKit secret](https://docs.docker.com/build/building/secrets/) for **`npm run build`** only (it is not saved in image layers). The same **`.env`** supplies **`CLERK_SECRET_KEY`** at container runtime for **`next start`**. Use a recent Docker / Docker Compose with BuildKit enabled (default on Docker Desktop). Manual builds:  
+`docker build --secret id=clerk_secret,env=CLERK_SECRET_KEY -f frontend/Dockerfile frontend`
 
 ---
 
