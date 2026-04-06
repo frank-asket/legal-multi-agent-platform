@@ -549,6 +549,7 @@ export function InquiryConsole() {
             />
             <UnderlineField
               label="Document IDs"
+              hint="Comma-separated. Leave empty to use demo-doc (same as HTTP)."
               value={docIdsStr}
               onChange={setDocIdsStr}
               placeholder="demo-doc"
