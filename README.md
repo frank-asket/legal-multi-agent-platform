@@ -20,7 +20,7 @@
 
 <br />
 
-[Features](#-what-you-get) · [Architecture](#-architecture) · [Quick start](#-quick-start) · [API](#-http--websocket-api) · [Production](#-production-hardening) · [Repo map](#-repository-map)
+[Features](#-what-you-get) · [Architecture](#-architecture) · [Quick start](#-quick-start) · [Web UI](#-web-ui-nextjs) · [API](#-http--websocket-api) · [Production](#-production-hardening) · [Repo map](#-repository-map)
 
 </div>
 
@@ -33,7 +33,7 @@
 | **Agents** | Sequential **Librarian → Researcher → Counsel → Auditor** flow with conditional **retry** back to retrieval when grounding fails. |
 | **Models** | Optional **OpenRouter** with **different model IDs** per role (researcher / counsel / auditor); offline stubs when no API key. |
 | **Grounding** | Counsel answers constrained to retrieved chunks; auditor checks faithfulness and suggests **retrieval refinements**. |
-| **Delivery** | **REST** for synchronous runs and **WebSocket** streaming (`updates` + final `values`) in one graph execution. |
+| **Delivery** | **Next.js** console in `frontend/`, plus **REST** and **WebSocket** streaming in one graph execution. |
 | **Operations** | Typed **settings**, request IDs, optional **API keys**, **rate limits**, CORS / trusted hosts, **Docker** + **GitHub Actions** CI. |
 
 ---
@@ -72,15 +72,36 @@ python3.11 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 cp .env.example .env
-uvicorn server.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn server.main:app --reload --host 0.0.0.0 --port 8010
 ```
 
 | Goal | Command / URL |
 |------|----------------|
-| Liveness | `GET http://127.0.0.1:8000/health` |
-| Readiness | `GET http://127.0.0.1:8000/health/ready` |
+| Liveness | `GET http://127.0.0.1:8010/health` |
+| Readiness | `GET http://127.0.0.1:8010/health/ready` |
 
 Configure **OpenRouter** and per-role models in `.env` when you are ready for live LLMs (see `.env.example`).
+
+Set **`CORS_ALLOW_ORIGINS`** to include **`http://localhost:3000`** when running the Next.js dev server (see `.env.example`).
+
+---
+
+## Web UI (Next.js)
+
+The console is inspired by a clean **legal-services** layout: dark hero, light inquiry area, pill **focus** tags, underline fields, and **Send message** / **HTTP** actions.
+
+```bash
+cd frontend
+cp .env.example .env.local
+npm install
+npm run dev
+```
+
+Open **`http://localhost:3000`**. The app calls the API at **`NEXT_PUBLIC_API_URL`** (default `http://127.0.0.1:8010`): **WebSocket** streaming for agent steps and **POST /v1/query** for one-shot runs.
+
+If **`API_KEYS`** is set on the API, paste a key in the form (stored in **`sessionStorage`** only). Browsers cannot send **`X-API-Key`** on WebSocket handshakes, so the UI uses **`?api_key=`** on the socket URL — prefer **WSS** behind TLS in production.
+
+**Docker:** `docker compose up --build` starts **API** on **8010** and **web** on **3000** (see `frontend/Dockerfile`).
 
 ---
 
@@ -120,6 +141,7 @@ Logs include path, status, duration, and **`request_id`**; error JSON responses 
 | `server/main.py` | FastAPI app, lifespan, rate limits, WebSocket session. |
 | `server/middleware.py` | Request ID and access logging. |
 | `server/security.py` | API key and thread / payload checks. |
+| `frontend/` | Next.js App Router UI (Tailwind, lucide-react). |
 
 ---
 

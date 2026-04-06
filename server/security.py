@@ -24,13 +24,18 @@ def websocket_api_key_rejected(websocket: WebSocket) -> bool:
     """
     Returns True if the connection should be rejected (401).
     Call before accept().
+
+    Browsers cannot set ``X-API-Key`` on WebSocket handshakes, so we also accept
+    ``api_key`` as a query parameter (use only over WSS in production).
     """
     keys = get_settings().api_key_set()
     if not keys:
         return False
-    supplied = websocket.headers.get("X-API-Key", "").strip() or websocket.headers.get(
-        "x-api-key", ""
-    ).strip()
+    supplied = (
+        websocket.headers.get("X-API-Key", "").strip()
+        or websocket.headers.get("x-api-key", "").strip()
+        or websocket.query_params.get("api_key", "").strip()
+    )
     return supplied not in keys
 
 
