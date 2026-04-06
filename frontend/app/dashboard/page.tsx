@@ -2,6 +2,7 @@ import { ContactCard } from "@/components/ContactCard";
 import { Footer } from "@/components/Footer";
 import { InquiryConsole } from "@/components/InquiryConsole";
 import { QuickStartStrip } from "@/components/QuickStartStrip";
+import { DashboardChatbot } from "@/components/chat/DashboardChatbot";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardUserMenu } from "@/components/dashboard/DashboardUserMenu";
@@ -43,6 +44,7 @@ export default function DashboardPage() {
 
         <Footer />
       </div>
+      <DashboardChatbot />
     </div>
   );
 }

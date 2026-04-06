@@ -3,16 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Calendar,
+  Activity,
   CreditCard,
-  FileText,
-  Gavel,
   LayoutDashboard,
+  Mail,
   Menu,
   MessageCircle,
   Scale,
-  User,
-  Users,
   X,
 } from "lucide-react";
 import { useState } from "react";
@@ -26,14 +23,10 @@ const navItems: {
   match?: "dashboard-home" | "account";
 }[] = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard, match: "dashboard-home" },
-  { href: "/dashboard#tasks", label: "Tasks", icon: Users },
-  { href: "/dashboard#calendar", label: "Calendar", icon: Calendar },
-  { href: "/dashboard#contact", label: "Contact", icon: User },
-  { href: "/dashboard#attorney", label: "Attorney", icon: Gavel },
-  { href: "/dashboard#cases", label: "Case", icon: Scale },
-  { href: "/dashboard#documents", label: "Document", icon: FileText },
-  { href: "/dashboard#messages", label: "Message", icon: MessageCircle },
-  { href: "/account", label: "Billing", icon: CreditCard, match: "account" },
+  { href: "/dashboard#consultation", label: "Agent console", icon: MessageCircle },
+  { href: "/dashboard#recent-runs-heading", label: "Recent runs", icon: Activity },
+  { href: "/dashboard#dashboard-contact", label: "Contact", icon: Mail },
+  { href: "/account", label: "Account & billing", icon: CreditCard, match: "account" },
 ];
 
 function NavLink({

@@ -19,7 +19,9 @@ import {
 } from "lucide-react";
 import { TagPill } from "./TagPill";
 import { UnderlineField } from "./UnderlineField";
-import { getApiBase, getWsBase } from "@/lib/api";
+import { getApiBase } from "@/lib/api";
+import { appendRunHistory, stateToRunSummary } from "@/lib/run-history";
+import { buildWsSessionUrl } from "@/lib/ws-session";
 
 const API_KEY_STORAGE = "legal_platform_api_key";
 
@@ -90,15 +92,6 @@ function defaultThread(): string {
       ? crypto.randomUUID().replace(/-/g, "")
       : String(Date.now());
   return `ui-${id}`;
-}
-
-function buildWsUrl(threadId: string, apiKey: string): string {
-  const path = `/ws/session/${encodeURIComponent(threadId)}`;
-  const base = getWsBase();
-  if (apiKey.trim()) {
-    return `${base}${path}?api_key=${encodeURIComponent(apiKey.trim())}`;
-  }
-  return `${base}${path}`;
 }
 
 export function InquiryConsole() {
@@ -260,7 +253,7 @@ export function InquiryConsole() {
     setBusy(true);
     setStatus("Connecting to your assistant…");
 
-    const ws = new WebSocket(buildWsUrl(tid, apiKey));
+    const ws = new WebSocket(buildWsSessionUrl(tid, apiKey));
     let gotResult = false;
 
     ws.onopen = () => {
@@ -289,6 +282,7 @@ export function InquiryConsole() {
         if (msg.type === "result" && msg.state) {
           gotResult = true;
           renderOutcome(msg.state);
+          appendRunHistory(stateToRunSummary(msg.state, tid, q, docIds));
           setStatus("Done — your answer is below.");
           ws.close();
           setBusy(false);
@@ -366,7 +360,10 @@ export function InquiryConsole() {
         setBusy(false);
         return;
       }
-      if (body.state) renderOutcome(body.state);
+      if (body.state) {
+        renderOutcome(body.state);
+        appendRunHistory(stateToRunSummary(body.state, tid, q, docIds));
+      }
       setStatus("Done — your answer is below.");
     } catch (e) {
       setStatus(String((e as Error).message || e));
@@ -549,7 +546,6 @@ export function InquiryConsole() {
             />
             <UnderlineField
               label="Document IDs"
-              hint="Comma-separated. Leave empty to use demo-doc (same as HTTP)."
               value={docIdsStr}
               onChange={setDocIdsStr}
               placeholder="demo-doc"
