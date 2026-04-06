@@ -36,6 +36,13 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - name: Install & build
         working-directory: frontend
+        env:
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
         run: |
+          if [ -z "${CLERK_SECRET_KEY}" ] || [ -z "${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}" ]; then
+            echo "::error::Add repository secrets NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and CLERK_SECRET_KEY (from Clerk Dashboard → API keys). Do not commit these values."
+            exit 1
+          fi
           npm ci
           npm run build

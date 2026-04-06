@@ -6,6 +6,11 @@ Copy env and install (from repo root or `frontend/`):
 
 ```bash
 cp .env.example .env.local
+```
+
+Add your [Clerk](https://clerk.com/) keys to `.env.local` (`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`). For [Clerk Billing](https://clerk.com/docs/billing/overview) checkout, set `NEXT_PUBLIC_CLERK_CHECKOUT_PLAN_ID` after creating a plan in the Clerk Dashboard.
+
+```bash
 npm install
 ```
 

@@ -99,9 +99,13 @@ npm run dev
 
 Open **`http://localhost:3000`**. The app calls the API at **`NEXT_PUBLIC_API_URL`** (default `http://127.0.0.1:8010`): **WebSocket** streaming for agent steps and **POST /v1/query** for one-shot runs.
 
+Put **`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`** and **`CLERK_SECRET_KEY`** in **`frontend/.env.local`** (see **`frontend/.env.example`**). Do not commit real keys; GitHub push protection may reject commits that contain development key material resembling other vendors’ test credentials.
+
+**GitHub Actions:** add the same two variables as [repository secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions) named **`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`** and **`CLERK_SECRET_KEY`** so the **frontend** CI job can run **`next build`**.
+
 If **`API_KEYS`** is set on the API, paste a key in the form (stored in **`sessionStorage`** only). Browsers cannot send **`X-API-Key`** on WebSocket handshakes, so the UI uses **`?api_key=`** on the socket URL — prefer **WSS** behind TLS in production.
 
-**Docker:** `docker compose up --build` starts **API** on **8010** and **web** on **3000** (see `frontend/Dockerfile`).
+**Docker:** add **`NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`** and **`CLERK_SECRET_KEY`** to the repo root **`.env`** (Compose substitutes them into the **web** image build). Then **`docker compose up --build`** starts **API** on **8010** and **web** on **3000** (see **`frontend/Dockerfile`**).
 
 ---
 
