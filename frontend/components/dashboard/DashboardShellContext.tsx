@@ -14,6 +14,7 @@ import type { JurisdictionMode, LocalRegion } from "@/lib/jurisdiction";
 const STORAGE_MATTER = "legal_platform_matter_title";
 const STORAGE_J_MODE = "legal_platform_jurisdiction_mode";
 const STORAGE_J_REGION = "legal_platform_jurisdiction_region";
+const STORAGE_REVIEW_MODE = "legal_platform_review_mode";
 
 export type DashboardShellContextValue = {
   matterTitle: string;
@@ -45,6 +46,9 @@ export function DashboardShellProvider({ children }: { children: ReactNode }) {
       if (m === "local" || m === "international") setJurisdictionModeState(m);
       const r = localStorage.getItem(STORAGE_J_REGION) as LocalRegion | null;
       if (r === "gh" || r === "uk" || r === "us-de") setLocalRegionState(r);
+      const rm = localStorage.getItem(STORAGE_REVIEW_MODE);
+      if (rm === "true") setReviewModeState(true);
+      else if (rm === "false") setReviewModeState(false);
     } catch {
       /* ignore */
     }
@@ -79,6 +83,11 @@ export function DashboardShellProvider({ children }: { children: ReactNode }) {
 
   const setReviewMode = useCallback((v: boolean) => {
     setReviewModeState(v);
+    try {
+      localStorage.setItem(STORAGE_REVIEW_MODE, v ? "true" : "false");
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   const value = useMemo(
