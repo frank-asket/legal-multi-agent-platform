@@ -24,7 +24,7 @@ export function DashboardChatbot() {
     {
       id: "welcome",
       role: "system",
-      text: "Quick questions run the same librarian → researcher → counsel → auditor graph as the console. Replies summarize the grounded answer.",
+      text: "Short questions use the same intake → research → drafting → quality check path as the main desk. Replies stay close to your instrument’s wording.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -55,7 +55,7 @@ export function DashboardChatbot() {
       .map((s) => s.trim())
       .filter(Boolean);
     if (!ids.length) {
-      setStatus("Add at least one document ID.");
+      setStatus("Add at least one file reference.");
       return;
     }
 
@@ -110,9 +110,9 @@ export function DashboardChatbot() {
           const plain = (analyst?.plain_english || "").trim();
           const tag =
             verdict?.faithful === true
-              ? "Auditor: grounded."
+              ? "Source check: answer follows the file."
               : verdict?.faithful === false
-                ? "Auditor: review suggested."
+                ? "Source check: senior review recommended."
                 : "";
           const text = [plain.slice(0, 1200), tag].filter(Boolean).join("\n\n") || "Done (no text).";
           appendRunHistory(stateToRunSummary(msg.state, runThread, q, ids));
@@ -137,7 +137,7 @@ export function DashboardChatbot() {
         {
           id: `e-${Date.now()}`,
           role: "assistant",
-          text: "Could not reach the legal API. Is it running on NEXT_PUBLIC_API_URL?",
+          text: "Could not reach your legal desk. Ask your administrator to confirm the service address, or try again shortly.",
         },
       ]);
       setBusy(false);
@@ -157,12 +157,12 @@ export function DashboardChatbot() {
         <div
           className="flex h-[min(32rem,calc(100vh-6rem))] w-[min(100vw-2rem,22rem)] sm:w-[24rem] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/15"
           role="dialog"
-          aria-label="Legal assistant chat"
+          aria-label="Legal desk chat"
         >
           <div className="flex items-center justify-between border-b border-slate-100 bg-[#0c0f14] px-3 py-2.5 text-white">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 opacity-90" aria-hidden />
-              <span className="text-xs font-bold tracking-wide">LEGAL ASSISTANT</span>
+              <span className="text-xs font-bold tracking-wide">QUICK DESK</span>
             </div>
             <div className="flex items-center gap-1">
               <button
@@ -214,7 +214,7 @@ export function DashboardChatbot() {
               value={docIds}
               onChange={(e) => setDocIds(e.target.value)}
               className="mb-2 w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs text-[#0c0f14] outline-none focus:ring-2 focus:ring-[#0c0f14]/20"
-              placeholder="document IDs (comma-separated)"
+              placeholder="File references (comma-separated, as registered)"
             />
             <div className="flex gap-2">
               <input
@@ -222,7 +222,7 @@ export function DashboardChatbot() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && send()}
                 className="min-w-0 flex-1 rounded-full border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#0c0f14]/20"
-                placeholder="Ask a legal question…"
+                placeholder="Ask in plain language…"
                 disabled={busy}
                 aria-label="Message"
               />
@@ -247,7 +247,7 @@ export function DashboardChatbot() {
           className="flex items-center gap-2 rounded-full bg-[#0c0f14] px-4 py-2.5 text-xs font-semibold text-white shadow-lg"
         >
           <MessageCircle className="h-4 w-4" />
-          Assistant
+          Quick desk
         </button>
       ) : null}
 
@@ -259,7 +259,7 @@ export function DashboardChatbot() {
             setMinimized(false);
           }}
           className="flex h-14 w-14 items-center justify-center rounded-full bg-[#0c0f14] text-white shadow-xl shadow-slate-900/25 transition hover:bg-slate-800"
-          aria-label="Open legal assistant"
+          aria-label="Open quick desk"
         >
           <MessageCircle className="h-6 w-6" aria-hidden />
         </button>

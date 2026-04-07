@@ -38,11 +38,11 @@ export function Hero() {
         >
           <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70 backdrop-blur-sm">
             <Sparkles className="h-3.5 w-3.5 text-amber-200/90" aria-hidden />
-            Multi-agent
+            For counsel &amp; IR teams
           </span>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium text-white/55 backdrop-blur-sm">
             <BookOpen className="h-3.5 w-3.5" aria-hidden />
-            Document intelligence
+            Source-linked answers
           </span>
         </motion.div>
         <motion.h1
@@ -55,7 +55,7 @@ export function Hero() {
             ease: [0.22, 1, 0.36, 1],
           }}
         >
-          Document-grounded legal assistance — start in minutes.
+          Research-grade support for contracts, treaties, and cross-border files.
         </motion.h1>
         <motion.p
           className="mt-5 max-w-xl text-sm leading-relaxed text-white/75 sm:mt-6 sm:text-base"
@@ -67,9 +67,10 @@ export function Hero() {
             ease: [0.22, 1, 0.36, 1],
           }}
         >
-          Ask in plain language, get answers tied to your text. Specialist agents
-          retrieve, draft, and check — with optional live progress. Demo uses a
-          sample document; no signup required.
+          Ask in everyday language. The desk returns a clear summary with quotes tied
+          to your instrument — useful for due diligence, compliance checks, and
+          treaty or contract review. Try the demo on a sample agreement; no account
+          required.
         </motion.p>
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 12 }}
@@ -85,7 +86,7 @@ export function Hero() {
             href="#consultation"
             className="group inline-flex w-fit items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#0c0f14] shadow-lg shadow-black/25 transition duration-300 hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-xl active:translate-y-0"
           >
-            Ask a question — free demo
+            Try the desk — free demo
             <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </a>
         </motion.div>

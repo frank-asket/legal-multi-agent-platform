@@ -7,26 +7,26 @@ import { SectionReveal } from "./SectionReveal";
 const steps = [
   {
     icon: BookOpen,
-    title: "Librarian",
-    text: "Ingest and structure document text for retrieval.",
+    title: "Intake & structure",
+    text: "Your instrument is organized so nothing material is skipped in later steps.",
     step: "01",
   },
   {
     icon: Search,
-    title: "Researcher",
-    text: "Retrieve passages and assemble evidence for counsel.",
+    title: "Research & sources",
+    text: "Relevant clauses and definitions are gathered and tied back to the file.",
     step: "02",
   },
   {
     icon: Gavel,
-    title: "Counsel",
-    text: "Draft grounded answers with explicit source anchors.",
+    title: "Drafting the view",
+    text: "A plain-language answer is drafted with explicit references to the text.",
     step: "03",
   },
   {
     icon: ShieldCheck,
-    title: "Auditor",
-    text: "Verify faithfulness and refine retrieval when needed.",
+    title: "Quality check",
+    text: "Outputs are checked against the sources so you know what still needs lawyer eyes.",
     step: "04",
   },
 ] as const;
@@ -47,11 +47,12 @@ export function ProcessSection() {
             <span className="h-px w-6 bg-slate-300 sm:w-10" aria-hidden />
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-2xl font-semibold leading-snug text-[#0c0f14] sm:text-[1.65rem] md:text-3xl">
-            A deliberate pipeline — not a black-box chatbot.
+            Built like a serious workflow — not a casual chat window.
           </p>
           <p className="mx-auto mt-3 max-w-xl text-sm text-slate-600">
-            On the demo, you can go from question to answer without signing up —
-            open the consultation block and pick an example if you like.
+            Suited to law firms, in-house teams, and international desks reviewing
+            agreements, MOUs, and treaty-related materials. On the demo, scroll to
+            the desk and choose an example prompt if you prefer not to type.
           </p>
         </SectionReveal>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">

@@ -155,16 +155,16 @@ export function DiscoveryHub() {
           value={ask}
           onChange={(e) => setAsk(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && submitAsk()}
-          placeholder='Audit this for hiring restrictions...'
+          placeholder="e.g. Map termination rights and any ministerial consent requirements…"
           className="w-full rounded-xl border-0 bg-transparent py-4 pl-12 pr-28 text-sm text-[#0c0f14] outline-none placeholder:text-slate-400 sm:pl-14 sm:text-[15px]"
-          aria-label="Ask the legal assistant"
+          aria-label="Ask the legal desk"
         />
         <button
           type="button"
           onClick={submitAsk}
           className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center gap-1.5 rounded-full bg-[#0c0f14] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-md transition hover:bg-slate-800"
         >
-          Run
+          Send to desk
           <ArrowRight className="h-3.5 w-3.5" aria-hidden />
         </button>
       </div>
@@ -181,9 +181,9 @@ export function DiscoveryHub() {
             type="search"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            placeholder="Filter matter runs…"
+            placeholder="Search recent analyses…"
             className="w-full rounded-full border border-slate-200/90 bg-white py-2.5 pl-10 pr-4 text-sm text-[#0c0f14] shadow-sm outline-none ring-[#0c0f14]/15 focus:ring-2"
-            aria-label="Filter recent runs"
+            aria-label="Filter recent analyses"
           />
         </div>
         <div className="flex flex-wrap gap-2">
@@ -191,7 +191,7 @@ export function DiscoveryHub() {
             href="#consultation"
             className="inline-flex items-center gap-2 rounded-full bg-[#0c0f14] px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-md transition hover:bg-slate-800"
           >
-            Agent console
+            Open legal desk
             <ArrowRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
           <a
@@ -200,7 +200,7 @@ export function DiscoveryHub() {
             rel="noreferrer"
             className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
           >
-            API docs
+            Technical docs
             <ExternalLink className="h-3.5 w-3.5" aria-hidden />
           </a>
         </div>
@@ -210,48 +210,52 @@ export function DiscoveryHub() {
         <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
           <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-500">
             <Radio className="h-3.5 w-3.5 text-emerald-600" aria-hidden />
-            API
+            Desk availability
           </div>
           {ready.error ? (
-            <p className="mt-3 text-sm font-semibold text-red-700">Offline</p>
+            <p className="mt-3 text-sm font-semibold text-red-700">Unavailable</p>
           ) : ready.ok ? (
-            <p className="mt-3 text-sm font-semibold text-emerald-800">Connected</p>
+            <p className="mt-3 text-sm font-semibold text-emerald-800">Online</p>
           ) : (
             <p className="mt-3 text-sm text-slate-500">Checking…</p>
           )}
           <p className="mt-1 text-[11px] text-slate-500">
-            {ready.error ? ready.error : getApiBase()}
+            {ready.error
+              ? "Your browser could not reach the legal desk. Try again or contact IT."
+              : "Your organization’s endpoint is responding."}
           </p>
         </div>
 
         <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
           <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-500">
             <Cpu className="h-3.5 w-3.5" aria-hidden />
-            Models
+            Assistant engine
           </div>
           <p className="mt-3 text-sm font-semibold text-[#0c0f14]">
             {ready.openrouter === null
               ? "…"
               : ready.openrouter
-                ? "OpenRouter live"
-                : "Stub / offline LLM"}
+                ? "Cloud models ready"
+                : "On-premises / offline mode"}
           </p>
-          <p className="mt-1 text-[11px] text-slate-500">From GET /health/ready</p>
+          <p className="mt-1 text-[11px] text-slate-500">
+            Configured for your deployment — details sit with administrators.
+          </p>
         </div>
 
         <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
           <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-500">
             <Activity className="h-3.5 w-3.5" aria-hidden />
-            Runs (this browser)
+            Analyses (this session)
           </div>
           <p className="mt-3 text-3xl font-semibold tabular-nums text-[#0c0f14]">{runs}</p>
-          <p className="mt-1 text-[11px] text-slate-500">Stored locally after each completion</p>
+          <p className="mt-1 text-[11px] text-slate-500">Saved in this browser after each completed question</p>
         </div>
 
         <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
           <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-500">
             <Bot className="h-3.5 w-3.5" aria-hidden />
-            Last auditor
+            Last quality check
           </div>
           {last ? (
             <>
@@ -265,9 +269,9 @@ export function DiscoveryHub() {
                 )}
                 <span className="text-sm font-semibold text-[#0c0f14]">
                   {last.faithful === true
-                    ? "Grounded"
+                    ? "Tied to sources"
                     : last.faithful === false
-                      ? "Review needed"
+                      ? "Counsel should verify"
                       : "Unknown"}
                 </span>
               </div>
@@ -278,19 +282,19 @@ export function DiscoveryHub() {
               )}
             </>
           ) : (
-            <p className="mt-3 text-sm text-slate-500">No runs yet — use the console or chatbot.</p>
+            <p className="mt-3 text-sm text-slate-500">None yet — use the desk or the floating assistant.</p>
           )}
         </div>
       </div>
 
       {(grounded > 0 || review > 0) && (
         <p className="text-xs text-slate-500">
-          Session totals:{" "}
-          <span className="font-medium text-emerald-800">{grounded} grounded</span>
+          This session:{" "}
+          <span className="font-medium text-emerald-800">{grounded} tied closely to sources</span>
           {review > 0 ? (
             <>
               {" "}
-              · <span className="font-medium text-amber-800">{review} need review</span>
+              · <span className="font-medium text-amber-800">{review} flagged for lawyer review</span>
             </>
           ) : null}
         </p>
@@ -301,11 +305,11 @@ export function DiscoveryHub() {
           Active matters
         </h2>
         <p className="mt-1 text-xs text-slate-500">
-          Recent runs as matter cards — risk is heuristic from playbook flags and auditor (not legal advice).
+          Each card is a recent question on your files. Shading reflects automated checks only — not a legal opinion.
         </p>
         {history.length === 0 ? (
           <p className="mt-4 text-sm text-slate-500">
-            Complete a query to populate matters. Cards open review mode with your document IDs prefilled.
+            Ask your first question to fill this board. A card opens review layout and recalls your document references.
           </p>
         ) : (
           <ul className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -328,7 +332,7 @@ export function DiscoveryHub() {
                     {new Date(e.at).toLocaleString()} · {e.documentIds.join(", ") || "—"}
                   </p>
                   {e.agents.length > 0 ? (
-                    <p className="mt-1 text-[11px] text-slate-600">Trail: {e.agents.join(" → ")}</p>
+                    <p className="mt-1 text-[11px] text-slate-600">Stages: {e.agents.join(" → ")}</p>
                   ) : null}
                 </button>
               </li>
@@ -342,16 +346,16 @@ export function DiscoveryHub() {
         aria-labelledby="recent-runs-heading"
       >
         <h2 id="recent-runs-heading" className="text-base font-semibold text-[#0c0f14]">
-          Recent agent runs
+          Recent analyses
         </h2>
         <p className="mt-1 text-xs text-slate-500">
-          Librarian → researcher → counsel → auditor (this browser only)
+          Intake → research → drafting → quality review (visible on this device only)
         </p>
         {filtered.length === 0 ? (
           <p className="mt-6 text-sm text-slate-500">
             {runs === 0
-              ? "Complete a query in the agent console or floating assistant to populate this list."
-              : "No runs match your filter."}
+              ? "Run a question from the legal desk or the floating assistant to build this list."
+              : "No analyses match your search."}
           </p>
         ) : (
           <ul className="mt-4 divide-y divide-slate-100">
@@ -360,11 +364,11 @@ export function DiscoveryHub() {
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-[#0c0f14]">{e.query || "—"}</p>
                   <p className="text-[11px] text-slate-500">
-                    {new Date(e.at).toLocaleString()} · thread {e.threadId.slice(0, 12)}… · docs{" "}
-                    {e.documentIds.join(", ")}
+                    {new Date(e.at).toLocaleString()}
+                    {e.documentIds.length > 0 ? ` · files: ${e.documentIds.join(", ")}` : ""}
                   </p>
                   {e.agents.length > 0 && (
-                    <p className="mt-0.5 text-[11px] text-slate-600">Trail: {e.agents.join(" → ")}</p>
+                    <p className="mt-0.5 text-[11px] text-slate-600">Stages: {e.agents.join(" → ")}</p>
                   )}
                 </div>
                 <div className="flex shrink-0 flex-wrap items-center gap-2">
@@ -375,15 +379,15 @@ export function DiscoveryHub() {
                   </span>
                   {e.faithful === true ? (
                     <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-900 ring-1 ring-emerald-100">
-                      Grounded
+                      Aligned
                     </span>
                   ) : e.faithful === false ? (
                     <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-900 ring-1 ring-amber-100">
-                      Review
+                      Verify
                     </span>
                   ) : null}
                   {e.chunkDocCount > 0 && (
-                    <span className="text-[10px] text-slate-400">{e.chunkDocCount} chunks</span>
+                    <span className="text-[10px] text-slate-400">{e.chunkDocCount} passages indexed</span>
                   )}
                 </div>
               </li>
@@ -394,11 +398,11 @@ export function DiscoveryHub() {
 
       <section
         className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-6"
-        aria-label="Agent pipeline"
+        aria-label="Desk workflow"
       >
-        <h2 className="text-sm font-semibold text-[#0c0f14]">Graph pipeline</h2>
+        <h2 className="text-sm font-semibold text-[#0c0f14]">How the desk processes a question</h2>
         <ol className="mt-4 flex flex-wrap items-center gap-2 text-xs font-medium text-slate-700">
-          {["Librarian", "Researcher", "Counsel", "Auditor"].map((label, i) => (
+          {["Intake", "Research", "Drafting", "Quality check"].map((label, i) => (
             <li key={label} className="flex items-center gap-2">
               {i > 0 ? <span className="text-slate-400">→</span> : null}
               <span className="rounded-full bg-white px-3 py-1.5 shadow-sm ring-1 ring-slate-100">{label}</span>
@@ -406,7 +410,7 @@ export function DiscoveryHub() {
           ))}
         </ol>
         <p className="mt-3 text-[11px] text-slate-500">
-          The auditor may route back to retrieval until retries are exhausted (see README architecture).
+          The quality step can send work back for more source gathering until limits are reached — similar to a supervised associate loop.
         </p>
       </section>
 
@@ -419,8 +423,8 @@ export function DiscoveryHub() {
           Archive
         </h2>
         <p className="mt-2 text-sm text-slate-600">
-          Closed matters will land here with retention policy controls once matter lifecycle APIs exist (shared team vault
-          in Clerk orgs is on the roadmap).
+          Closed files and expired mandates can be filed here once your organization turns on matter lifecycle controls
+          and shared vaults for the team.
         </p>
       </section>
 
@@ -433,8 +437,8 @@ export function DiscoveryHub() {
           Shared with team
         </h2>
         <p className="mt-2 text-sm text-slate-600">
-          Organization vaults will let collaborators reuse uploaded bundles without re-ingestion. Today, document IDs
-          are manual — wire shared storage and ACLs to activate this workspace.
+          Shared workspaces let colleagues reuse the same bundle without uploading again. Until your vault is connected,
+          reference codes are entered manually under desk settings.
         </p>
       </section>
 
@@ -444,12 +448,12 @@ export function DiscoveryHub() {
         aria-labelledby="dash-contact-heading"
       >
         <h2 id="dash-contact-heading" className="text-sm font-semibold text-[#0c0f14]">
-          Contact & setup
+          Help & setup
         </h2>
         <p className="mt-2 text-sm text-slate-600">
-          Use <strong className="font-medium text-[#0c0f14]">API docs</strong> for integration, set an API key in the
-          agent console if your deployment requires it, and open <strong className="font-medium text-[#0c0f14]">Account</strong>{" "}
-          for Clerk profile and billing.
+          <strong className="font-medium text-[#0c0f14]">Technical docs</strong> help IT wire your environment. If your
+          desk requires an access key, add it under legal desk settings. Use <strong className="font-medium text-[#0c0f14]">Account</strong>{" "}
+          for sign-in, profile, and subscription.
         </p>
       </section>
     </div>

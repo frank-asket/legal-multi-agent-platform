@@ -32,9 +32,8 @@ export function PdfReviewPlaceholder() {
           <div className="h-2 w-full rounded bg-red-200/80 ring-1 ring-red-300/60" title="Flagged risk" />
           <div className="h-2 w-4/5 rounded bg-slate-100" />
           <p className="pt-2 text-[11px] leading-relaxed text-slate-500">
-            Connect document storage to render the real PDF. Answers in the analyst panel already carry{" "}
-            <code className="rounded bg-slate-100 px-1 text-[10px]">cited_spans</code> — the next step is
-            mapping those spans to viewer coordinates for click-through citations.
+            When your matter vault is linked, the signed PDF appears here with highlights that jump from the answer to
+            the exact clause. Until then, use the citations listed beside your summary.
           </p>
         </div>
       </div>

@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Legal Intel — Multi-agent console",
+  title: "Legal Intel — counsel & international affairs desk",
   description:
-    "Grounded legal Q&A with librarian, researcher, counsel, and auditor agents.",
+    "Document-grounded answers for lawyers, jurists, and IR officers — summaries with citations and a structured review workflow.",
 };
 
 export default function RootLayout({

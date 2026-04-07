@@ -21,10 +21,10 @@ export function Footer() {
             </span>
             <div>
               <p className="text-sm font-semibold text-[#0c0f14]">
-                Legal Multi-Agent Platform
+                Legal desk — multi-stage review
               </p>
               <p className="text-xs text-slate-500">
-                FastAPI backend · Next.js console
+                Document-grounded support for legal and international affairs teams
               </p>
             </div>
           </div>
@@ -35,12 +35,12 @@ export function Footer() {
             </span>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white px-3 py-1.5 shadow-sm">
               <Cpu className="h-3.5 w-3.5" aria-hidden />
-              Agent pipeline
+              Structured workflow
             </span>
           </div>
         </motion.div>
         <p className="mt-8 text-center text-[11px] text-slate-400 sm:text-left">
-          © {new Date().getFullYear()} · For demonstration and integration testing
+          © {new Date().getFullYear()} · Demonstration environment — not legal advice
         </p>
       </div>
     </footer>

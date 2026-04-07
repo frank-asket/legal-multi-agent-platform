@@ -18,13 +18,13 @@ export default function AccountPage() {
               href="/dashboard"
               className="text-sm text-slate-600 underline-offset-4 hover:text-[#0c0f14] hover:underline"
             >
-              Dashboard
+              Workspace
             </Link>
             <Link
               href="/dashboard#consultation"
               className="text-sm text-slate-600 underline-offset-4 hover:text-[#0c0f14] hover:underline"
             >
-              Consultation
+              Legal desk
             </Link>
           </div>
         </div>

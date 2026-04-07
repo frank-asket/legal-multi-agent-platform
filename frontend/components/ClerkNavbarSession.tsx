@@ -19,7 +19,7 @@ export function ClerkNavbarSession({
               href="/dashboard"
               className="rounded-full px-3 py-2 text-sm text-white/85 transition hover:bg-white/10 hover:text-white"
             >
-              Dashboard
+              Workspace
             </Link>
             <Link
               href="/account"
@@ -45,7 +45,7 @@ export function ClerkNavbarSession({
               href="/dashboard"
               className="flex items-center rounded-xl py-3 pl-1 text-white/90"
             >
-              Dashboard
+              Workspace
             </Link>
             <Link
               href="/account"

@@ -34,50 +34,50 @@ const SERVICES: {
 }[] = [
   {
     id: "consultation",
-    label: "Consultation",
+    label: "General file Q&A",
     docIds: "demo-doc",
-    placeholder: "What are the key obligations in this agreement?",
+    placeholder: "What are the principal obligations and how do they interrelate?",
     examples: [
-      "What are the key obligations in this agreement?",
-      "What are the termination and notice requirements?",
+      "Summarize the core obligations and any cross-default links.",
+      "What notice and termination steps does this instrument require?",
     ],
   },
   {
     id: "contract",
-    label: "Contract review",
+    label: "Agreement review",
     docIds: "demo-doc",
-    placeholder: "Summarize limitation of liability and confidentiality.",
+    placeholder: "How are liability, confidentiality, and dispute resolution framed?",
     examples: [
-      "Summarize limitation of liability and confidentiality.",
-      "Are there unusual or one-sided clauses I should know about?",
+      "Compare limitation of liability with confidentiality and carve-outs.",
+      "Flag one-sided or non-standard clauses a negotiating lawyer should revisit.",
     ],
   },
   {
     id: "definitions",
-    label: "Definitions",
+    label: "Definitions & terms",
     docIds: "demo-doc",
-    placeholder: "How is Confidential Information defined?",
+    placeholder: "How is Confidential Information defined, and what is excluded?",
     examples: [
-      "How is Confidential Information defined?",
-      "What counts as force majeure in this agreement?",
+      "Explain the defined term “Affiliate” and where it matters in the text.",
+      "How is force majeure treated, including notice and duration?",
     ],
   },
   {
     id: "liability",
-    label: "Liability",
+    label: "Risk & remedies",
     docIds: "demo-doc",
-    placeholder: "What is the liability cap?",
+    placeholder: "What monetary caps, exclusions, and indemnities apply?",
     examples: [
-      "What is the liability cap?",
-      "Are consequential damages excluded?",
+      "What is the liability cap and are consequential losses excluded?",
+      "Are there uncapped obligations (e.g. confidentiality or IP)?",
     ],
   },
 ];
 
 const DEPTH: { id: string; label: string; hint: string }[] = [
-  { id: "quick", label: "Quick scan", hint: "Faster overview" },
-  { id: "standard", label: "Balanced", hint: "Default" },
-  { id: "deep", label: "Thorough", hint: "More depth" },
+  { id: "quick", label: "Executive skim", hint: "Shorter read" },
+  { id: "standard", label: "Standard review", hint: "Usual depth" },
+  { id: "deep", label: "Clause-by-clause bias", hint: "More granular" },
 ];
 
 type StatusLogEvent = {
@@ -209,7 +209,7 @@ export function InquiryConsole() {
     html += `<div class="flex flex-wrap gap-2">`;
     html += `<span class="rounded-full px-3 py-1 text-xs font-semibold ${
       faithful ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"
-    }">${faithful ? "Auditor: grounded" : "Auditor: review needed"}</span>`;
+    }">${faithful ? "Source check: aligned with instrument" : "Source check: counsel should verify"}</span>`;
     if (score !== null) {
       html += `<span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">Faithfulness ${Math.round(score * 100)}%</span>`;
     }
@@ -230,7 +230,7 @@ export function InquiryConsole() {
     }
 
     if (flags.length) {
-      html += `<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Playbook</h3><div class="space-y-2">`;
+      html += `<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Clause checklist</h3><div class="space-y-2">`;
       for (const f of flags) {
         const sev = String(f.severity ?? "low");
         html += `<div class="rounded-xl border border-slate-200 p-3 text-sm"><div class="font-semibold">${escapeHtml(String(f.label ?? f.rule_id ?? "Flag"))} <span class="text-slate-500">(${escapeHtml(sev)})</span></div><div class="text-slate-600">${escapeHtml(String(f.rationale ?? ""))}</div></div>`;
@@ -239,11 +239,11 @@ export function InquiryConsole() {
     }
 
     if (verdict?.notes) {
-      html += `<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Auditor notes</h3><p class="text-sm text-slate-600">${escapeHtml(verdict.notes)}</p>`;
+      html += `<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Review notes</h3><p class="text-sm text-slate-600">${escapeHtml(verdict.notes)}</p>`;
     }
 
     if (chunks && typeof chunks === "object") {
-      html += `<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Indexed chunks</h3><pre class="overflow-x-auto rounded-lg bg-slate-50 p-3 text-xs text-slate-600">${escapeHtml(JSON.stringify(chunks, null, 2))}</pre>`;
+      html += `<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Indexed passages (technical)</h3><pre class="overflow-x-auto rounded-lg bg-slate-50 p-3 text-xs text-slate-600">${escapeHtml(JSON.stringify(chunks, null, 2))}</pre>`;
     }
 
     if (errors.length) {
@@ -280,19 +280,19 @@ export function InquiryConsole() {
       .map((s) => s.trim())
       .filter(Boolean);
     if (!docIds.length) {
-      setStatus("Add at least one document ID in advanced settings.");
+      setStatus("Add at least one document reference under connection settings.");
       return;
     }
 
     clearPanels();
     setBusy(true);
-    setStatus("Connecting to your assistant…");
+    setStatus("Connecting to your organization’s desk…");
 
     const ws = new WebSocket(buildWsSessionUrl(tid, apiKey));
     let gotResult = false;
 
     ws.onopen = () => {
-      setStatus("Reviewing your documents and drafting an answer…");
+      setStatus("Reviewing your instrument and preparing a sourced answer…");
       ws.send(JSON.stringify({ user_query: q, document_ids: docIds }));
     };
 
@@ -351,7 +351,7 @@ export function InquiryConsole() {
 
     ws.onerror = () => {
       setStatus(
-        "Could not connect. Is the legal API running? Check advanced settings or ask your admin.",
+        "Could not connect. Confirm the legal desk is running for your environment, or open connection settings below.",
       );
       try {
         window.dispatchEvent(
@@ -479,24 +479,24 @@ export function InquiryConsole() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700/90">
-            No signup for the demo
+            Demo — no account required
           </p>
           <h2 className="mt-1 max-w-xl text-2xl font-semibold leading-tight text-[#0c0f14] sm:text-[1.65rem] md:text-3xl">
-            Ask your question — get a grounded answer
+            Put your question to the desk
           </h2>
         </div>
         <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-medium text-slate-600">
           <Layers className="h-3.5 w-3.5 text-slate-400" aria-hidden />
-          Depth:{" "}
+          Style:{" "}
           <strong className="font-semibold text-[#0c0f14]">{depthLabel}</strong>
-          <span className="text-slate-400">(demo)</span>
+          <span className="text-slate-400">(preference)</span>
         </span>
       </div>
       <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600">
-        Choose what you need help with, write in everyday language (or use an
-        example), then run the assistant. You&apos;ll see a plain summary and
-        citations from the text — useful support for your own review, not a
-        substitute for a qualified lawyer.
+        Pick the type of review, write in plain language or use a suggested prompt,
+        then run the desk. You will see a readable summary with citations into the
+        instrument — a drafting aid and checklist, not a substitute for regulated
+        legal advice.
       </p>
 
       <div className="mt-8">
@@ -526,7 +526,7 @@ export function InquiryConsole() {
           How thorough should it be?
         </p>
         <p className="mt-1 text-xs text-slate-500">
-          Cosmetic for now — labels help you preview how depth might feel later.
+          Adjusts how thorough the narration feels; all modes still tie answers to the source text.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           {DEPTH.map((d) => (
@@ -584,7 +584,7 @@ export function InquiryConsole() {
         <textarea
           value={details}
           onChange={(e) => setDetails(e.target.value)}
-          placeholder="Dates, party names, or background — merged into your question for the assistant."
+          placeholder="Dates, party names, treaty context, or negotiation history — combined with your question."
           rows={2}
           className="mt-2 w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-[#0c0f14] outline-none transition focus:border-[#0c0f14]/40 focus:ring-2 focus:ring-[#0c0f14]/15 placeholder:text-slate-400"
         />
@@ -599,7 +599,7 @@ export function InquiryConsole() {
         >
           <span className="inline-flex items-center gap-2">
             <Settings2 className="h-4 w-4 text-slate-500" aria-hidden />
-            Technical &amp; connection settings
+            Connection &amp; file identifiers (optional)
           </span>
           <ChevronDown
             className={`h-5 w-5 shrink-0 text-slate-400 transition ${showAdvanced ? "rotate-180" : ""}`}
@@ -610,7 +610,7 @@ export function InquiryConsole() {
           <div className="mt-4 space-y-6 rounded-xl border border-dashed border-slate-200 bg-slate-50/40 p-4 sm:p-5">
             <UnderlineField
               label="Your name"
-              hint="Optional — not sent to the API."
+              hint="Optional — not sent to the desk."
               value={yourName}
               onChange={setYourName}
               placeholder="Jordan Smith"
@@ -623,31 +623,31 @@ export function InquiryConsole() {
               placeholder="you@company.com"
             />
             <UnderlineField
-              label="Session ID"
-              hint="For live updates; a new one is created for you automatically."
+              label="Session reference"
+              hint="Used for live progress; one is created automatically if you leave this blank."
               value={threadId}
               onChange={setThreadId}
             />
             <UnderlineField
-              label="Document IDs"
+              label="Document reference(s)"
+              hint="Comma-separated identifiers for the files your organization has registered (demo uses a built-in sample)."
               value={docIdsStr}
               onChange={setDocIdsStr}
               placeholder="demo-doc"
             />
             <UnderlineField
-              label="API key"
-              hint="Only if your server requires it; stored in this browser only."
+              label="Access key"
+              hint="If your deployment requires authentication; stored only in this browser."
               value={apiKey}
               onChange={setApiKey}
               type="password"
             />
             <p className="text-xs leading-relaxed text-slate-500">
-              Connected to:{" "}
+              Service endpoint:{" "}
               <code className="rounded bg-slate-200/60 px-1 py-0.5 text-[11px]">
                 {getApiBase()}
               </code>
-              . If the page cannot reach the API, ask your team to allow this site
-              in CORS or run the backend locally.
+              . If the page cannot reach your organization&apos;s environment, contact your IT administrator.
             </p>
           </div>
         ) : null}
@@ -665,7 +665,7 @@ export function InquiryConsole() {
           ) : (
             <Zap className="h-4 w-4" aria-hidden />
           )}
-          Get answer — live updates
+          Get answer — step by step
           {!busy ? (
             <ArrowUpRight className="h-4 w-4 opacity-80 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           ) : null}
@@ -681,7 +681,7 @@ export function InquiryConsole() {
           ) : (
             <Globe className="h-4 w-4 text-slate-500" aria-hidden />
           )}
-          Get answer — one step
+          Get answer — single pass
         </button>
       </div>
 
@@ -710,10 +710,10 @@ export function InquiryConsole() {
         <div>
           <h3 className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
             <Bot className="h-4 w-4 text-slate-400" aria-hidden />
-            What&apos;s happening
+            Desk progress
           </h3>
           <p className="mt-1 text-xs text-slate-500">
-            Live steps from each specialist agent (best with “live updates”).
+            Live stages as each part of the workflow advances (best with step-by-step).
           </p>
           <ul className="mt-3 max-h-80 space-y-2 overflow-y-auto rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50/50 p-3 shadow-inner">
             <AnimatePresence initial={false}>
@@ -723,7 +723,7 @@ export function InquiryConsole() {
                   initial={false}
                   className="rounded-xl px-3 py-6 text-center text-sm text-slate-400"
                 >
-                  Run the assistant to see progress here.
+                  Run the desk with step-by-step to see progress here.
                 </motion.li>
               ) : (
                 timeline.map((ev, i) => (

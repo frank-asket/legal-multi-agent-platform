@@ -32,8 +32,8 @@ const navItems: {
   icon: NavIcon;
   match?: "dashboard-home" | "account";
 }[] = [
-  { href: "/dashboard#consultation", label: "Agent console", icon: MessageCircle },
-  { href: "/dashboard#recent-runs-heading", label: "Recent runs", icon: Activity },
+  { href: "/dashboard#consultation", label: "Legal desk", icon: MessageCircle },
+  { href: "/dashboard#recent-runs-heading", label: "Recent analyses", icon: Activity },
   { href: "/dashboard#dashboard-contact", label: "Contact", icon: Mail },
   { href: "/account", label: "Account & billing", icon: CreditCard, match: "account" },
 ];
@@ -116,7 +116,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
       <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
         Navigate
       </p>
-      <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto" aria-label="Dashboard">
+      <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto" aria-label="Workspace navigation">
         {navItems.map((item) => (
           <NavLink
             key={item.href + item.label}

@@ -23,17 +23,17 @@ export function DashboardHeader() {
       <div className="mx-auto flex max-w-[1600px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div className="min-w-0 flex-1 pt-10 lg:pt-0">
           <label className="sr-only" htmlFor="matter-title">
-            Matter title
+            Matter or file name
           </label>
           <input
             id="matter-title"
             value={matterTitle}
             onChange={(e) => setMatterTitle(e.target.value)}
-            placeholder="Matter title"
+            placeholder="Name this matter or instrument"
             className="w-full max-w-xl border-0 border-b border-transparent bg-transparent text-lg font-semibold tracking-tight text-[#0c0f14] outline-none transition placeholder:text-slate-400 focus:border-[#0c0f14]/25"
           />
           <p className="mt-0.5 text-[11px] text-slate-500">
-            Command center — agents, documents, and review in one surface.
+            Your workspace for sourced Q&amp;A, jurisdiction context, and review — built for counsel and IR desks.
           </p>
         </div>
 

@@ -47,10 +47,10 @@ export function InsightsPanel() {
     >
       <div className="space-y-4 rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-sm ring-1 ring-slate-100/80 lg:p-5">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Risk breakdown</p>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">At-a-glance risk</p>
           <p className="mt-2 text-xs text-slate-600">
-            Scoped to your most recent run in this browser. Full PDF clause map and compare-table modes ship with
-            document storage.
+            Based on your latest analysis in this browser. Side-by-side PDF review and multi-file comparison arrive
+            when your matter vault is connected.
           </p>
           {last ? (
             <ul className="mt-3 space-y-2 text-xs text-[#0c0f14]">
@@ -59,18 +59,22 @@ export function InsightsPanel() {
                 <span className="font-semibold capitalize">{last.riskBand}</span>
               </li>
               <li className="flex justify-between gap-2 rounded-lg bg-slate-50 px-3 py-2 ring-1 ring-slate-100">
-                <span className="text-slate-600">Playbook flags</span>
+                <span className="text-slate-600">Automated clause alerts</span>
                 <span className="font-semibold tabular-nums">{last.playbookFlagCount}</span>
               </li>
               <li className="flex justify-between gap-2 rounded-lg bg-slate-50 px-3 py-2 ring-1 ring-slate-100">
-                <span className="text-slate-600">Auditor</span>
+                <span className="text-slate-600">Source check</span>
                 <span className="font-semibold">
-                  {last.faithful === true ? "Grounded" : last.faithful === false ? "Review" : "—"}
+                  {last.faithful === true
+                    ? "Aligned with text"
+                    : last.faithful === false
+                      ? "Needs lawyer review"
+                      : "—"}
                 </span>
               </li>
             </ul>
           ) : (
-            <p className="mt-3 text-xs text-slate-500">No runs yet — run the console to populate this panel.</p>
+            <p className="mt-3 text-xs text-slate-500">No analyses yet — use the legal desk to populate this panel.</p>
           )}
         </div>
 
@@ -101,7 +105,7 @@ export function InsightsPanel() {
             Review mode
           </p>
           <p className="mt-1 text-[11px] text-slate-600">
-            Split chat and PDF placeholder for clause heat-maps (mapping cited_spans is the next integration step).
+            Place the question panel next to the document preview while you compare citations to the source.
           </p>
           <button
             type="button"
@@ -118,8 +122,8 @@ export function InsightsPanel() {
             Regulatory watchdog
           </p>
           <p className="mt-2 text-[11px] leading-relaxed text-slate-600">
-            When local law is pinned ({pinned}), proactive alerts for newly uploaded contracts will appear here once a
-            watchlist feed and ingestion webhooks are connected.
+            With {pinned} pinned below, alerts on regulatory change affecting newly filed instruments can appear here
+            once your counsel desk subscribes to official feeds.
           </p>
         </div>
 
@@ -131,11 +135,11 @@ export function InsightsPanel() {
           <ul className="mt-2 space-y-2 text-[11px] text-slate-600">
             <FeedRow
               icon={<Globe2 className="h-3 w-3 shrink-0 text-slate-400" aria-hidden />}
-              text={`Placeholder digest for ${pinned} — wire Curated sources in a later sprint.`}
+              text={`Illustrative digest for ${pinned} — your team can connect trusted gazettes, regulators, and treaty depositories.`}
             />
             <FeedRow
               icon={<ListChecks className="h-3 w-3 shrink-0 text-slate-400" aria-hidden />}
-              text="Multilingual bridge: upload non-English contracts and ask in English once translation + retrieval are configured per tenant."
+              text="Multilingual desk: pose questions in one working language while the underlying agreement stays in another, when translation is enabled for your organization."
             />
           </ul>
         </div>
@@ -145,10 +149,10 @@ export function InsightsPanel() {
             href="/account"
             className="text-[11px] font-medium text-[#0c0f14] underline-offset-2 hover:underline"
           >
-            Organization vault, usage analytics, audit logs
+            Firm workspace, usage insights, compliance history
           </Link>
           <p className="mt-1 text-[10px] text-slate-500">
-            Clerk orgs + server-side logging are roadmap items — link leads to account for now.
+            Team sharing and partner dashboards are rolling out — this link opens your account for now.
           </p>
         </div>
       </div>

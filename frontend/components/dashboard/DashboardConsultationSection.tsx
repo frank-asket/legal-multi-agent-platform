@@ -13,18 +13,18 @@ export function DashboardConsultationSection() {
     <section
       className="mx-auto max-w-[1600px] border-t border-slate-200/80 bg-white px-4 py-14 sm:px-5 md:px-8"
       id="consultation"
-      aria-label="Multi-agent consultation"
+      aria-label="Legal desk consultation"
     >
       <div className="mb-8">
         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-          Agent console
+          Legal desk
         </p>
         <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[#0c0f14]">
-          Collaborative legal intelligence
+          Ask questions tied to your instruments
         </h2>
         <p className="mt-2 max-w-2xl text-sm text-slate-600">
-          Run objectives against your documents: librarian, researcher, counsel, and auditor agents with interactive
-          verification.
+          Use plain language on contracts, treaty packets, or negotiation drafts. The desk returns readable answers with
+          references into the text and an optional step-by-step view of the workflow.
         </p>
       </div>
       <QuickStartStrip />
@@ -45,8 +45,8 @@ export function DashboardConsultationSection() {
       )}
       {reviewMode ? (
         <p className="mt-6 text-center text-[11px] text-slate-500">
-          Review mode: analyst chat and PDF preview side by side. Upload pipelines and PDF.js wiring unlock clause-level
-          highlights from citations.
+          Review mode shows the desk beside a document preview. Full PDF highlighting from your citations is available
+          once your files are connected to the viewer.
         </p>
       ) : null}
     </section>

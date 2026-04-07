@@ -3,20 +3,20 @@ import { ArrowRight, FileText, MessageCircle, Sparkles } from "lucide-react";
 const steps = [
   {
     n: "1",
-    title: "Pick a topic",
-    text: "Choose what kind of help you need — review, definitions, liability, or a general question.",
+    title: "Choose the task",
+    text: "Contract review, definitions, liability, treaty-style wording, or a general pass — pick what fits your file.",
     icon: FileText,
   },
   {
     n: "2",
-    title: "Ask in plain language",
-    text: "Type your question or tap an example. No account required for the demo.",
+    title: "Ask clearly",
+    text: "Type your question or use a suggested prompt. The demo does not require sign-up.",
     icon: MessageCircle,
   },
   {
     n: "3",
-    title: "Get a grounded answer",
-    text: "See a clear summary plus citations from your documents, with optional live progress.",
+    title: "Read with sources",
+    text: "Receive a concise answer with references into the text, plus an optional step-by-step view of the desk.",
     icon: Sparkles,
   },
 ] as const;
@@ -26,19 +26,20 @@ export function QuickStartStrip() {
     <div className="rounded-2xl border border-slate-200/90 bg-gradient-to-br from-slate-50 to-white p-5 shadow-sm sm:p-6 md:rounded-3xl md:p-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-lg font-semibold text-[#0c0f14] md:text-xl">
-          Start in under a minute
+          Three steps — no technical setup
         </h2>
         <a
           href="#consultation-form"
           className="inline-flex items-center gap-1 text-sm font-medium text-[#0c0f14] underline decoration-slate-300 underline-offset-4 transition hover:decoration-[#0c0f14]"
         >
-          Jump to the question box
+          Go to your question
           <ArrowRight className="h-4 w-4" aria-hidden />
         </a>
       </div>
       <p className="mt-2 max-w-3xl text-sm text-slate-600">
-        Try the built-in sample document first. When you connect your own backend and
-        documents, the same flow scales to your team.
+        The demo uses a sample agreement so you can see citations and structure
+        immediately. When your organization connects its own matter files, the
+        same process applies.
       </p>
       <ol className="mt-6 grid gap-4 sm:grid-cols-3 sm:gap-5">
         {steps.map(({ n, title, text, icon: Icon }) => (

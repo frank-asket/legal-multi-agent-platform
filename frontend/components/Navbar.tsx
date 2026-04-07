@@ -18,9 +18,9 @@ import { ClerkNavbarSession } from "@/components/ClerkNavbarSession";
 import { apiDocsUrl } from "@/lib/api";
 
 const links = [
-  { href: "#services", label: "Services", Icon: LayoutGrid },
-  { href: "#process", label: "Process", Icon: ListOrdered },
-  { href: "#consultation", label: "Consultation", Icon: MessageCircle },
+  { href: "#services", label: "Overview", Icon: LayoutGrid },
+  { href: "#process", label: "How it works", Icon: ListOrdered },
+  { href: "#consultation", label: "Try the desk", Icon: MessageCircle },
 ] as const;
 
 export function Navbar() {
@@ -57,10 +57,10 @@ export function Navbar() {
             href={apiDocsUrl()}
             target="_blank"
             rel="noreferrer"
-            className="ml-2 inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm text-white/75 transition hover:bg-white/10 hover:text-white"
+            className="ml-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[11px] font-medium text-white/50 transition hover:bg-white/10 hover:text-white/80"
           >
-            API
-            <ExternalLink className="h-3.5 w-3.5 opacity-70" aria-hidden />
+            Technical docs
+            <ExternalLink className="h-3 w-3 opacity-70" aria-hidden />
           </a>
           <ClerkNavbarSession variant="desktop" />
         </nav>
@@ -71,7 +71,7 @@ export function Navbar() {
               href="/sign-up"
               className="group inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-[#0c0f14] shadow-md shadow-black/20 transition duration-300 hover:-translate-y-px hover:bg-slate-100 hover:shadow-lg active:translate-y-0"
             >
-              Get started
+              Open workspace
               <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           </div>
@@ -119,7 +119,7 @@ export function Navbar() {
                 className="flex items-center gap-2 py-3 pl-1 text-white/90"
               >
                 <ExternalLink className="h-4 w-4" aria-hidden />
-                API docs
+                Technical docs
               </a>
               <ClerkNavbarSession variant="mobile" />
               <SignedOut>
@@ -128,7 +128,7 @@ export function Navbar() {
                   className="mt-4 flex items-center justify-center gap-2 rounded-full bg-white py-3.5 text-sm font-semibold text-[#0c0f14] shadow-lg transition active:scale-[0.99]"
                   onClick={() => setOpen(false)}
                 >
-                  Get started
+                  Open workspace
                   <ArrowUpRight className="h-4 w-4" />
                 </Link>
               </SignedOut>

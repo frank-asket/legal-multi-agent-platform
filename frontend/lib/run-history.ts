@@ -64,6 +64,7 @@ export function riskBandFromState(state: Record<string, unknown>): RiskBand {
     flags.some(
       (f) =>
         f.severity === "critical" ||
+        f.severity === "CRITICAL" ||
         f.severity === "high" ||
         f.severity === "HIGH",
     )

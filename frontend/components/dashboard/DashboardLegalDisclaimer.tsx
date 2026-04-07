@@ -7,7 +7,7 @@ export function DashboardLegalDisclaimer() {
         <strong className="font-semibold text-[#0c0f14]">AI analysis, not legal advice.</strong> Outputs support
         professional review only. For regulated or high-stakes matters, engage qualified counsel.{" "}
         <Link href="#consultation" className="font-medium text-[#0c0f14] underline-offset-2 hover:underline">
-          Human review queue
+          Escalate to counsel review
         </Link>
       </p>
     </div>

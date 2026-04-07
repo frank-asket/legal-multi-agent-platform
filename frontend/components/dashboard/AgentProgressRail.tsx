@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 const STEPS = [
-  { id: "librarian", label: "Librarian", hint: "Indexing" },
-  { id: "researcher", label: "Researcher", hint: "Retrieval" },
-  { id: "counsel", label: "Counsel", hint: "Drafting" },
-  { id: "auditor", label: "Auditor", hint: "Verification" },
+  { id: "librarian", label: "Intake", hint: "Structure" },
+  { id: "researcher", label: "Research", hint: "Sources" },
+  { id: "counsel", label: "Drafting", hint: "Answer" },
+  { id: "auditor", label: "Quality", hint: "Verify" },
 ] as const;
 
 type AgentStatusDetail = {
@@ -60,7 +60,7 @@ export function AgentProgressRail() {
     >
       <div className="flex items-center gap-2">
         <span className="hidden shrink-0 text-[10px] font-bold uppercase tracking-wider text-slate-500 sm:inline">
-          Agents
+          Desk stages
         </span>
         <div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto py-0.5 sm:gap-1">
           {STEPS.map((step, i) => {
@@ -108,7 +108,7 @@ export function AgentProgressRail() {
         </p>
       ) : (
         <p className="mt-1 text-[11px] text-slate-400">
-          Idle — run the console to see live steps (Librarian → Researcher → Counsel → Auditor).
+          Idle — run the legal desk with step-by-step to watch Intake → Research → Drafting → Quality check.
         </p>
       )}
     </div>

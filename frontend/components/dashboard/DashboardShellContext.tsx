@@ -97,6 +97,7 @@ export function DashboardShellProvider({ children }: { children: ReactNode }) {
       localRegion,
       setLocalRegion,
       reviewMode,
+      setReviewMode,
     ],
   );
 

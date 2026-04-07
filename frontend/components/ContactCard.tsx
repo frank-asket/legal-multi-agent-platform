@@ -30,11 +30,12 @@ export function ContactCard() {
           </span>
           <div>
             <h2 className="text-lg font-semibold text-[#0c0f14]">
-              Want a person involved?
+              Prefer human review?
             </h2>
             <p className="mt-1 text-xs leading-relaxed text-slate-500">
-              The assistant gets you fast, document-grounded drafts. For regulated
-              matters, pair it with your counsel.
+              The desk speeds up first-pass reading and cites the instrument. For
+              opinions, filings, or politically sensitive matters, use it alongside
+              qualified lawyers or policy counsel.
             </p>
           </div>
         </div>
@@ -42,7 +43,7 @@ export function ContactCard() {
           href="#consultation-form"
           className="inline-flex shrink-0 items-center gap-1 self-start rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-[#0c0f14] shadow-sm transition hover:border-slate-300"
         >
-          Try the assistant first
+          Try the desk first
           <ArrowRight className="h-3.5 w-3.5" aria-hidden />
         </a>
       </div>
@@ -77,23 +78,23 @@ export function ContactCard() {
         <div className="flex gap-3 rounded-xl transition-colors hover:bg-white/40 sm:gap-4">
           <Phone className="mt-0.5 h-5 w-5 shrink-0 text-slate-400" />
           <div>
-            <p className="font-medium text-[#0c0f14]">Integrations</p>
-            <p className="mt-0.5 leading-relaxed">Health check: GET /health/ready</p>
+            <p className="font-medium text-[#0c0f14]">Availability</p>
+            <p className="mt-0.5 leading-relaxed">Your organization can confirm the service is online before a live matter.</p>
           </div>
         </div>
         <div className="flex gap-3 rounded-xl transition-colors hover:bg-white/40 sm:gap-4">
           <Mail className="mt-0.5 h-5 w-5 shrink-0 text-slate-400" />
           <div>
-            <p className="font-medium text-[#0c0f14]">API</p>
-            <p className="mt-0.5 leading-relaxed">OpenAPI docs for your developers</p>
+            <p className="font-medium text-[#0c0f14]">Technical desk</p>
+            <p className="mt-0.5 leading-relaxed">Documentation for IT and integration teams is linked from the site header.</p>
           </div>
         </div>
         <div className="flex gap-3 border-t border-slate-200/80 pt-5 sm:gap-4 sm:pt-6">
           <Clock className="mt-0.5 h-5 w-5 shrink-0 text-slate-400" />
           <div>
-            <p className="font-medium text-[#0c0f14]">Live run</p>
+            <p className="font-medium text-[#0c0f14]">Step-by-step view</p>
             <p className="mt-0.5 text-xs text-slate-500">
-              Turn on “live updates” to watch each agent step as it works.
+              Choose the step-by-step option to see how each stage of the desk advances your question.
             </p>
           </div>
         </div>
