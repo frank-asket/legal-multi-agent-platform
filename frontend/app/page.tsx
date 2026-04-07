@@ -1,4 +1,12 @@
 import { ContactCard } from "@/components/ContactCard";
+import { FaqAccordion } from "@/components/marketing/FaqAccordion";
+import { FeatureShowcase } from "@/components/marketing/FeatureShowcase";
+import { FinalCta } from "@/components/marketing/FinalCta";
+import { LogoCloud } from "@/components/marketing/LogoCloud";
+import { PricingSection } from "@/components/marketing/PricingSection";
+import { Testimonials } from "@/components/marketing/Testimonials";
+import { ValueProps } from "@/components/marketing/ValueProps";
+import { WhitepaperSection } from "@/components/marketing/WhitepaperSection";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
 import { InquiryConsole } from "@/components/InquiryConsole";
@@ -11,9 +19,15 @@ export default function Home() {
     <>
       <Navbar />
       <Hero />
+      <LogoCloud />
+      <FeatureShowcase />
+      <ValueProps />
       <ProcessSection />
+      <PricingSection />
+      <FaqAccordion />
+      <Testimonials />
       <section
-        className="relative bg-white py-14 sm:py-16 md:py-24"
+        className="relative border-t border-slate-200 bg-white py-14 sm:py-16 md:py-24"
         id="consultation"
       >
         <div
@@ -36,6 +50,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <WhitepaperSection />
+      <FinalCta />
       <Footer />
     </>
   );
