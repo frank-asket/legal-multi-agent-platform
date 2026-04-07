@@ -35,7 +35,7 @@ export function DashboardShellProvider({ children }: { children: ReactNode }) {
   const [jurisdictionMode, setJurisdictionModeState] =
     useState<JurisdictionMode>("international");
   const [localRegion, setLocalRegionState] = useState<LocalRegion>("gh");
-  const [reviewMode, setReviewMode] = useState(false);
+  const [reviewMode, setReviewModeState] = useState(false);
 
   useEffect(() => {
     try {
@@ -75,6 +75,10 @@ export function DashboardShellProvider({ children }: { children: ReactNode }) {
     } catch {
       /* ignore */
     }
+  }, []);
+
+  const setReviewMode = useCallback((v: boolean) => {
+    setReviewModeState(v);
   }, []);
 
   const value = useMemo(
