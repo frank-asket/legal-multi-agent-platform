@@ -217,10 +217,10 @@ export function InquiryConsole({
       html += `<span class="rounded-full px-3 py-1 text-xs font-semibold ${
         faithful
           ? z
-            ? "bg-emerald-500/20 text-emerald-300"
+            ? "bg-white/15 text-white"
             : "bg-emerald-100 text-emerald-800"
           : z
-            ? "bg-red-500/25 text-red-300"
+            ? "bg-zinc-700/70 text-zinc-200"
             : "bg-red-100 text-red-800"
       }">${faithful ? "Source check: aligned with instrument" : "Source check: counsel should verify"}</span>`;
       if (score !== null) {
@@ -245,7 +245,7 @@ export function InquiryConsole({
           const ref = `${String(s.source_id ?? "")} · ${String(s.document_id ?? "")} · p.${pdf?.page_number ?? "?"}`;
           html += `<blockquote class="border-l-4 pl-4 py-3 text-sm ${
             z
-              ? "border-[#00FF00] bg-zinc-800/60"
+              ? "border-white bg-zinc-800/60"
               : "border-[#0c0f14] bg-slate-50"
           }"><div class="text-xs font-medium ${
             z ? "text-zinc-400" : "text-slate-500"
@@ -290,8 +290,8 @@ export function InquiryConsole({
       }
 
       if (errors.length) {
-        html += `<div class="rounded-lg p-3 text-sm ${
-          z ? "bg-red-950/50 text-red-300" : "bg-red-50 text-red-800"
+        html += `<div class="rounded-lg border p-3 text-sm ${
+          z ? "border-white/20 bg-zinc-900 text-zinc-200" : "border-red-100 bg-red-50 text-red-800"
         }">${escapeHtml(errors.join(" · "))}</div>`;
       }
 
@@ -523,7 +523,7 @@ export function InquiryConsole({
       transition={{ duration: reduce ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] }}
       className={
         zyra
-          ? "scroll-mt-24 rounded-2xl border border-zinc-700/80 bg-zinc-900/95 p-6 shadow-[0_0_60px_rgba(0,255,0,0.07)] ring-1 ring-zinc-700/50 sm:p-8 md:rounded-3xl md:p-10"
+          ? "scroll-mt-24 rounded-2xl border border-zinc-700/80 bg-zinc-900/95 p-6 shadow-[0_0_60px_rgba(255,255,255,0.05)] ring-1 ring-zinc-700/50 sm:p-8 md:rounded-3xl md:p-10"
           : "scroll-mt-24 rounded-2xl border border-slate-100 bg-white/90 p-6 shadow-sm ring-1 ring-slate-100/80 sm:p-8 md:rounded-3xl md:p-10"
       }
     >
@@ -532,7 +532,7 @@ export function InquiryConsole({
           <p
             className={
               zyra
-                ? "text-xs font-semibold uppercase tracking-wide text-[#00FF00]"
+                ? "text-xs font-semibold uppercase tracking-wide text-white"
                 : "text-xs font-semibold uppercase tracking-wide text-emerald-700/90"
             }
           >
@@ -658,7 +658,7 @@ export function InquiryConsole({
           rows={4}
           className={
             zyra
-              ? "mt-3 w-full resize-y rounded-xl border border-zinc-600 bg-zinc-900 px-3 py-3 text-sm text-white outline-none transition focus:border-[#00FF00]/50 focus:ring-2 focus:ring-[#00FF00]/20 placeholder:text-zinc-500"
+              ? "mt-3 w-full resize-y rounded-xl border border-zinc-600 bg-zinc-900 px-3 py-3 text-sm text-white outline-none transition focus:border-white/45 focus:ring-2 focus:ring-white/20 placeholder:text-zinc-500"
               : "mt-3 w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-3 text-[#0c0f14] text-sm outline-none ring-[#0c0f14]/0 transition focus:border-[#0c0f14]/40 focus:ring-2 focus:ring-[#0c0f14]/15 placeholder:text-slate-400"
           }
         />
@@ -679,7 +679,7 @@ export function InquiryConsole({
               onClick={() => setQuestion(ex)}
               className={
                 zyra
-                  ? "rounded-full border border-zinc-600 bg-zinc-800/80 px-3 py-2 text-left text-xs leading-snug text-zinc-200 transition hover:border-[#00FF00]/40 sm:max-w-[280px]"
+                  ? "rounded-full border border-zinc-600 bg-zinc-800/80 px-3 py-2 text-left text-xs leading-snug text-zinc-200 transition hover:border-white/40 sm:max-w-[280px]"
                   : "rounded-full border border-slate-200 bg-white px-3 py-2 text-left text-xs leading-snug text-[#0c0f14] transition hover:border-slate-400 hover:shadow-sm sm:max-w-[280px]"
               }
             >
@@ -707,7 +707,7 @@ export function InquiryConsole({
           rows={2}
           className={
             zyra
-              ? "mt-2 w-full resize-y rounded-xl border border-zinc-600 bg-zinc-900 px-3 py-2 text-sm text-white outline-none transition focus:border-[#00FF00]/50 focus:ring-2 focus:ring-[#00FF00]/20 placeholder:text-zinc-500"
+              ? "mt-2 w-full resize-y rounded-xl border border-zinc-600 bg-zinc-900 px-3 py-2 text-sm text-white outline-none transition focus:border-white/45 focus:ring-2 focus:ring-white/20 placeholder:text-zinc-500"
               : "mt-2 w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-[#0c0f14] outline-none transition focus:border-[#0c0f14]/40 focus:ring-2 focus:ring-[#0c0f14]/15 placeholder:text-slate-400"
           }
         />
@@ -804,7 +804,7 @@ export function InquiryConsole({
           onClick={runWebSocket}
           className={
             zyra
-              ? "group inline-flex items-center justify-center gap-2 rounded-full bg-[#00FF00] px-7 py-3.5 text-xs font-bold uppercase tracking-wide text-black shadow-[0_0_28px_rgba(0,255,0,0.35)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#33ff33] disabled:pointer-events-none disabled:opacity-50 sm:min-w-[220px]"
+              ? "group inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-xs font-bold uppercase tracking-wide text-black shadow-[0_0_28px_rgba(255,255,255,0.18)] transition duration-300 hover:-translate-y-0.5 hover:bg-zinc-200 disabled:pointer-events-none disabled:opacity-50 sm:min-w-[220px]"
               : "group inline-flex items-center justify-center gap-2 rounded-full bg-[#0c0f14] px-7 py-3.5 text-xs font-bold uppercase tracking-wide text-white shadow-lg shadow-slate-900/25 transition duration-300 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-xl disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none sm:min-w-[220px]"
           }
         >
@@ -824,7 +824,7 @@ export function InquiryConsole({
           onClick={runHttp}
           className={
             zyra
-              ? "inline-flex items-center justify-center gap-2 rounded-full border border-zinc-500 bg-zinc-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-wide text-zinc-200 transition duration-300 hover:-translate-y-px hover:border-[#00FF00]/50 hover:text-white disabled:pointer-events-none disabled:opacity-50"
+              ? "inline-flex items-center justify-center gap-2 rounded-full border border-zinc-500 bg-zinc-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-wide text-zinc-200 transition duration-300 hover:-translate-y-px hover:border-white/45 hover:text-white disabled:pointer-events-none disabled:opacity-50"
               : "inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-6 py-3.5 text-xs font-semibold uppercase tracking-wide text-slate-700 transition duration-300 hover:-translate-y-px hover:border-slate-500 hover:shadow-sm disabled:pointer-events-none disabled:opacity-50"
           }
         >
@@ -843,12 +843,12 @@ export function InquiryConsole({
       <div
         className={
           zyra
-            ? "mt-4 flex gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs leading-relaxed text-amber-200/95"
+            ? "mt-4 flex gap-2 rounded-xl border border-white/20 bg-zinc-900/80 p-3 text-xs leading-relaxed text-zinc-300"
             : "mt-4 flex gap-2 rounded-xl border border-amber-200/80 bg-amber-50/50 p-3 text-xs leading-relaxed text-amber-950/90"
         }
       >
         <Info
-          className={zyra ? "mt-0.5 h-4 w-4 shrink-0 text-amber-400" : "mt-0.5 h-4 w-4 shrink-0 text-amber-700"}
+          className={zyra ? "mt-0.5 h-4 w-4 shrink-0 text-white" : "mt-0.5 h-4 w-4 shrink-0 text-amber-700"}
           aria-hidden
         />
         <p>
@@ -867,7 +867,7 @@ export function InquiryConsole({
           <Loader2
             className={
               zyra
-                ? "mt-0.5 h-4 w-4 shrink-0 animate-spin text-[#00FF00]"
+                ? "mt-0.5 h-4 w-4 shrink-0 animate-spin text-white"
                 : "mt-0.5 h-4 w-4 shrink-0 animate-spin text-[#0c0f14]"
             }
             aria-hidden
@@ -876,7 +876,7 @@ export function InquiryConsole({
           <span
             className={
               zyra
-                ? "mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#00FF00] shadow-[0_0_8px_#00FF00]"
+                ? "mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.45)]"
                 : "mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
             }
             aria-hidden
@@ -964,14 +964,14 @@ export function InquiryConsole({
           <div
             className={
               zyra
-                ? "mt-3 min-h-[220px] rounded-2xl border border-zinc-700 bg-zinc-950/90 p-4 shadow-[inset_0_0_24px_rgba(0,255,0,0.04)] transition-shadow hover:border-zinc-600"
+                ? "mt-3 min-h-[220px] rounded-2xl border border-zinc-700 bg-zinc-950/90 p-4 shadow-[inset_0_0_24px_rgba(255,255,255,0.04)] transition-shadow hover:border-zinc-600"
                 : "mt-3 min-h-[220px] rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
             }
             dangerouslySetInnerHTML={{
               __html:
                 outcomeHtml ||
                 (zyra
-                  ? '<p class="text-sm text-zinc-500 leading-relaxed">Your answer will appear here with a plain-language summary and quotes tied to the source text. Use <strong class="text-[#00FF00]">step by step</strong> to watch each stage, or <strong class="text-[#00FF00]">single pass</strong> for one response.</p>'
+                  ? '<p class="text-sm text-zinc-500 leading-relaxed">Your answer will appear here with a plain-language summary and quotes tied to the source text. Use <strong class="text-white">step by step</strong> to watch each stage, or <strong class="text-white">single pass</strong> for one response.</p>'
                   : '<p class="text-sm text-slate-500 leading-relaxed">Your answer will appear here with a plain-language summary and quotes tied to the source text. Use <strong>live updates</strong> to watch each step, or <strong>one step</strong> for a single response.</p>'),
             }}
           />

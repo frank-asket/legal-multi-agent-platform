@@ -8,7 +8,7 @@ export function DashboardLegalDisclaimer() {
         professional review only. For regulated or high-stakes matters, engage qualified counsel.{" "}
         <Link
           href="#consultation"
-          className="font-medium text-[#00FF00] underline-offset-2 hover:text-[#33ff33] hover:underline"
+          className="font-medium text-white underline-offset-2 hover:text-zinc-300 hover:underline"
         >
           Escalate to counsel review
         </Link>

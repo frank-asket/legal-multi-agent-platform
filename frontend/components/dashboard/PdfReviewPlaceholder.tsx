@@ -12,7 +12,7 @@ export function PdfReviewPlaceholder({ variant = "default" }: { variant?: "defau
     <div
       className={
         zyra
-          ? "flex h-full min-h-[320px] flex-col rounded-2xl border border-zinc-700 bg-zinc-900/95 shadow-[0_0_40px_rgba(0,255,0,0.06)] ring-1 ring-zinc-700/50"
+          ? "flex h-full min-h-[320px] flex-col rounded-2xl border border-zinc-700 bg-zinc-900/95 shadow-[0_0_40px_rgba(255,255,255,0.05)] ring-1 ring-zinc-700/50"
           : "flex h-full min-h-[320px] flex-col rounded-2xl border border-slate-200 bg-white shadow-sm ring-1 ring-slate-100/80"
       }
       aria-label="Document preview (placeholder)"
@@ -31,13 +31,13 @@ export function PdfReviewPlaceholder({ variant = "default" }: { variant?: "defau
               : "inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-600"
           }
         >
-          <FileText className={zyra ? "h-4 w-4 text-[#00FF00]" : "h-4 w-4 text-slate-400"} aria-hidden />
+          <FileText className={zyra ? "h-4 w-4 text-white" : "h-4 w-4 text-slate-400"} aria-hidden />
           Source PDF
         </span>
         <span
           className={
             zyra
-              ? "inline-flex items-center gap-1 rounded-full border border-[#00FF00]/40 bg-[#00FF00]/10 px-2 py-0.5 text-[10px] font-medium text-[#00FF00]"
+              ? "inline-flex items-center gap-1 rounded-full border border-white/35 bg-white/10 px-2 py-0.5 text-[10px] font-medium text-white"
               : "inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-900 ring-1 ring-amber-200"
           }
         >
@@ -65,7 +65,7 @@ export function PdfReviewPlaceholder({ variant = "default" }: { variant?: "defau
           <div
             className={
               zyra
-                ? "h-2 w-full rounded bg-[#00FF00]/35 ring-1 ring-[#00FF00]/50"
+                ? "h-2 w-full rounded bg-white/35 ring-1 ring-white/50"
                 : "h-2 w-full rounded bg-amber-200/90 ring-1 ring-amber-400/50"
             }
             title="Cited clause"
@@ -74,7 +74,7 @@ export function PdfReviewPlaceholder({ variant = "default" }: { variant?: "defau
           <div
             className={
               zyra
-                ? "h-2 w-full rounded bg-red-500/30 ring-1 ring-red-500/50"
+                ? "h-2 w-full rounded bg-zinc-600/80 ring-1 ring-white/35"
                 : "h-2 w-full rounded bg-red-200/80 ring-1 ring-red-300/60"
             }
             title="Flagged risk"

@@ -25,7 +25,7 @@ export function UnderlineField({
       <span
         className={
           z
-            ? "text-xs font-medium uppercase tracking-wide text-zinc-500 transition group-focus-within:text-[#00FF00]"
+            ? "text-xs font-medium uppercase tracking-wide text-zinc-500 transition group-focus-within:text-white"
             : "text-xs font-medium uppercase tracking-wide text-slate-500 transition group-focus-within:text-[#0c0f14]"
         }
       >
@@ -44,7 +44,7 @@ export function UnderlineField({
         autoComplete="off"
         className={
           z
-            ? "mt-2 w-full border-0 border-b border-zinc-600 bg-transparent py-2 text-white outline-none transition duration-300 placeholder:text-zinc-600 focus:border-[#00FF00] focus:shadow-[0_1px_0_0_rgb(0_255_0)]"
+            ? "mt-2 w-full border-0 border-b border-zinc-600 bg-transparent py-2 text-white outline-none transition duration-300 placeholder:text-zinc-600 focus:border-white focus:shadow-[0_1px_0_0_rgb(255_255_255)]"
             : "mt-2 w-full border-0 border-b border-slate-200 bg-transparent py-2 text-[#0c0f14] outline-none transition duration-300 placeholder:text-slate-300 focus:border-[#0c0f14] focus:shadow-[0_1px_0_0_rgb(12_15_20)]"
         }
       />

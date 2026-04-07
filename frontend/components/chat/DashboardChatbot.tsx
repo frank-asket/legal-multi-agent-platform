@@ -155,14 +155,14 @@ export function DashboardChatbot() {
     <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2 sm:bottom-6 sm:right-6">
       {open && !minimized ? (
         <div
-          className="flex h-[min(32rem,calc(100vh-6rem))] w-[min(100vw-2rem,22rem)] sm:w-[24rem] flex-col overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-900 shadow-2xl shadow-[0_0_40px_rgba(0,255,0,0.12)]"
+          className="flex h-[min(32rem,calc(100vh-6rem))] w-[min(100vw-2rem,22rem)] sm:w-[24rem] flex-col overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-900 shadow-2xl shadow-[0_0_40px_rgba(255,255,255,0.08)]"
           role="dialog"
           aria-label="Legal desk chat"
         >
           <div className="flex items-center justify-between border-b border-zinc-700 bg-black px-3 py-2.5 text-white">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[#00FF00]" aria-hidden />
-              <span className="text-xs font-bold tracking-wide text-[#00FF00]">QUICK DESK</span>
+              <Sparkles className="h-4 w-4 text-white" aria-hidden />
+              <span className="text-xs font-bold tracking-wide text-white">QUICK DESK</span>
             </div>
             <div className="flex items-center gap-1">
               <button
@@ -192,7 +192,7 @@ export function DashboardChatbot() {
                 key={m.id}
                 className={`rounded-xl px-3 py-2 ${
                   m.role === "user"
-                    ? "ml-6 bg-[#00FF00] text-black"
+                    ? "ml-6 bg-white text-black"
                     : m.role === "system"
                       ? "bg-zinc-800/80 text-zinc-400 text-xs"
                       : "mr-4 border border-zinc-700 bg-zinc-900 text-zinc-100"
@@ -213,7 +213,7 @@ export function DashboardChatbot() {
               id="chatbot-docs"
               value={docIds}
               onChange={(e) => setDocIds(e.target.value)}
-              className="mb-2 w-full rounded-lg border border-zinc-600 bg-zinc-900 px-2 py-1.5 text-xs text-white outline-none placeholder:text-zinc-500 focus:ring-2 focus:ring-[#00FF00]/30"
+              className="mb-2 w-full rounded-lg border border-zinc-600 bg-zinc-900 px-2 py-1.5 text-xs text-white outline-none placeholder:text-zinc-500 focus:ring-2 focus:ring-white/30"
               placeholder="File references (comma-separated, as registered)"
             />
             <div className="flex gap-2">
@@ -221,7 +221,7 @@ export function DashboardChatbot() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && send()}
-                className="min-w-0 flex-1 rounded-full border border-zinc-600 bg-zinc-900 px-3 py-2 text-sm text-white outline-none placeholder:text-zinc-500 focus:ring-2 focus:ring-[#00FF00]/30"
+                className="min-w-0 flex-1 rounded-full border border-zinc-600 bg-zinc-900 px-3 py-2 text-sm text-white outline-none placeholder:text-zinc-500 focus:ring-2 focus:ring-white/30"
                 placeholder="Ask in plain language…"
                 disabled={busy}
                 aria-label="Message"
@@ -230,7 +230,7 @@ export function DashboardChatbot() {
                 type="button"
                 onClick={send}
                 disabled={busy || !input.trim()}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00FF00] text-black shadow-[0_0_16px_rgba(0,255,0,0.35)] transition hover:bg-[#33ff33] disabled:opacity-40"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-black shadow-[0_0_16px_rgba(255,255,255,0.2)] transition hover:bg-zinc-200 disabled:opacity-40"
                 aria-label="Send"
               >
                 <Send className="h-4 w-4" />
@@ -244,7 +244,7 @@ export function DashboardChatbot() {
         <button
           type="button"
           onClick={() => setMinimized(false)}
-          className="flex items-center gap-2 rounded-full bg-[#00FF00] px-4 py-2.5 text-xs font-semibold text-black shadow-[0_0_24px_rgba(0,255,0,0.35)]"
+          className="flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-black shadow-[0_0_24px_rgba(255,255,255,0.15)]"
         >
           <MessageCircle className="h-4 w-4" />
           Quick desk
@@ -258,7 +258,7 @@ export function DashboardChatbot() {
             setOpen(true);
             setMinimized(false);
           }}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-[#00FF00] text-black shadow-[0_0_32px_rgba(0,255,0,0.4)] transition hover:bg-[#33ff33]"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-black shadow-[0_0_32px_rgba(255,255,255,0.2)] transition hover:bg-zinc-200"
           aria-label="Open quick desk"
         >
           <MessageCircle className="h-6 w-6" aria-hidden />
