@@ -131,6 +131,20 @@ export function InquiryConsole() {
   }, []);
 
   useEffect(() => {
+    const onPrefill = (ev: Event) => {
+      const ce = ev as CustomEvent<{ query?: string; documentIds?: string }>;
+      const d = ce.detail;
+      if (d?.query != null) setQuestion(d.query);
+      if (typeof d?.documentIds === "string" && d.documentIds.trim()) {
+        setDocIdsStr(d.documentIds.trim());
+      }
+    };
+    window.addEventListener("legal-platform-prefill-query", onPrefill as EventListener);
+    return () =>
+      window.removeEventListener("legal-platform-prefill-query", onPrefill as EventListener);
+  }, []);
+
+  useEffect(() => {
     setDocIdsStr(service.docIds);
   }, [service]);
 
@@ -147,8 +161,22 @@ export function InquiryConsole() {
       if (!patch || typeof patch !== "object") continue;
       const p = patch as { status_log?: StatusLogEvent[] };
       const log = p.status_log;
-      if (!Array.isArray(log)) continue;
+      if (!Array.isArray(log) || log.length === 0) continue;
       setTimeline((prev) => [...prev, ...log]);
+      const last = log[log.length - 1];
+      try {
+        window.dispatchEvent(
+          new CustomEvent("legal-platform-agent-status", {
+            detail: {
+              agent: last.agent,
+              phase: last.phase,
+              detail: last.detail,
+            },
+          }),
+        );
+      } catch {
+        /* ignore */
+      }
     }
   }, []);
 
@@ -229,6 +257,13 @@ export function InquiryConsole() {
   const clearPanels = useCallback(() => {
     setTimeline([]);
     setOutcomeHtml(null);
+    try {
+      window.dispatchEvent(
+        new CustomEvent("legal-platform-agent-status", { detail: { idle: true } }),
+      );
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   const runWebSocket = useCallback(() => {
@@ -274,6 +309,13 @@ export function InquiryConsole() {
           setOutcomeHtml(
             `<div class="text-sm text-red-700">${escapeHtml(msg.detail || "Error")}</div>`,
           );
+          try {
+            window.dispatchEvent(
+              new CustomEvent("legal-platform-agent-status", { detail: { idle: true } }),
+            );
+          } catch {
+            /* ignore */
+          }
           ws.close();
           setBusy(false);
           return;
@@ -284,11 +326,25 @@ export function InquiryConsole() {
           renderOutcome(msg.state);
           appendRunHistory(stateToRunSummary(msg.state, tid, q, docIds));
           setStatus("Done — your answer is below.");
+          try {
+            window.dispatchEvent(
+              new CustomEvent("legal-platform-agent-status", { detail: { idle: true } }),
+            );
+          } catch {
+            /* ignore */
+          }
           ws.close();
           setBusy(false);
         }
       } catch {
         setStatus("Invalid server message.");
+        try {
+          window.dispatchEvent(
+            new CustomEvent("legal-platform-agent-status", { detail: { idle: true } }),
+          );
+        } catch {
+          /* ignore */
+        }
         setBusy(false);
       }
     };
@@ -297,6 +353,13 @@ export function InquiryConsole() {
       setStatus(
         "Could not connect. Is the legal API running? Check advanced settings or ask your admin.",
       );
+      try {
+        window.dispatchEvent(
+          new CustomEvent("legal-platform-agent-status", { detail: { idle: true } }),
+        );
+      } catch {
+        /* ignore */
+      }
       setBusy(false);
     };
 
@@ -357,6 +420,13 @@ export function InquiryConsole() {
             : JSON.stringify(body.detail ?? body);
         setStatus(`${res.status}: ${detail.slice(0, 120)}`);
         setOutcomeHtml(`<pre class="text-xs text-red-800 whitespace-pre-wrap">${escapeHtml(JSON.stringify(body, null, 2))}</pre>`);
+        try {
+          window.dispatchEvent(
+            new CustomEvent("legal-platform-agent-status", { detail: { idle: true } }),
+          );
+        } catch {
+          /* ignore */
+        }
         setBusy(false);
         return;
       }
@@ -365,8 +435,22 @@ export function InquiryConsole() {
         appendRunHistory(stateToRunSummary(body.state, tid, q, docIds));
       }
       setStatus("Done — your answer is below.");
+      try {
+        window.dispatchEvent(
+          new CustomEvent("legal-platform-agent-status", { detail: { idle: true } }),
+        );
+      } catch {
+        /* ignore */
+      }
     } catch (e) {
       setStatus(String((e as Error).message || e));
+      try {
+        window.dispatchEvent(
+          new CustomEvent("legal-platform-agent-status", { detail: { idle: true } }),
+        );
+      } catch {
+        /* ignore */
+      }
     }
     setBusy(false);
   }, [

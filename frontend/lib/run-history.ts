@@ -3,6 +3,9 @@
  * (the API has no history endpoint).
  */
 
+/** Approximate exposure for matter cards and insights (not legal advice). */
+export type RiskBand = "low" | "medium" | "high";
+
 export type RunHistoryEntry = {
   id: string;
   at: number;
@@ -13,6 +16,8 @@ export type RunHistoryEntry = {
   faithfulnessScore: number | null;
   agents: string[];
   chunkDocCount: number;
+  playbookFlagCount: number;
+  riskBand: RiskBand;
 };
 
 const STORAGE_KEY = "legal_platform_run_history";
@@ -44,13 +49,77 @@ function totalChunkCount(chunks: unknown): number {
   return n;
 }
 
+function inferRiskFromFaithful(faithful: boolean | null): RiskBand {
+  if (faithful === false) return "high";
+  if (faithful === true) return "low";
+  return "medium";
+}
+
+export function riskBandFromState(state: Record<string, unknown>): RiskBand {
+  const verdict = state.auditor_verdict as { faithful?: boolean } | undefined;
+  const faithful = verdict?.faithful;
+  const flags = (state.playbook_flags as { severity?: string }[]) || [];
+  if (faithful === false) return "high";
+  if (
+    flags.some(
+      (f) =>
+        f.severity === "critical" ||
+        f.severity === "high" ||
+        f.severity === "HIGH",
+    )
+  ) {
+    return "high";
+  }
+  if (
+    flags.some(
+      (f) =>
+        f.severity === "medium" ||
+        f.severity === "MEDIUM",
+    )
+  ) {
+    return "medium";
+  }
+  if (flags.length > 0) return "low";
+  if (faithful === true) return "low";
+  return "medium";
+}
+
+function playbookFlagCountFromState(state: Record<string, unknown>): number {
+  const flags = state.playbook_flags;
+  return Array.isArray(flags) ? flags.length : 0;
+}
+
+function normalizeEntry(raw: Partial<RunHistoryEntry>): RunHistoryEntry {
+  const faithful: boolean | null =
+    typeof raw.faithful === "boolean" ? raw.faithful : null;
+  const flagCount =
+    typeof raw.playbookFlagCount === "number" ? raw.playbookFlagCount : 0;
+  const riskBand: RiskBand =
+    raw.riskBand ?? inferRiskFromFaithful(faithful);
+  return {
+    id: raw.id || String(Date.now()),
+    at: typeof raw.at === "number" ? raw.at : Date.now(),
+    threadId: raw.threadId || "",
+    query: raw.query || "",
+    documentIds: Array.isArray(raw.documentIds) ? raw.documentIds : [],
+    faithful,
+    faithfulnessScore:
+      typeof raw.faithfulnessScore === "number" ? raw.faithfulnessScore : null,
+    agents: Array.isArray(raw.agents) ? raw.agents : [],
+    chunkDocCount: typeof raw.chunkDocCount === "number" ? raw.chunkDocCount : 0,
+    playbookFlagCount: flagCount,
+    riskBand,
+  };
+}
+
 export function loadRunHistory(): RunHistoryEntry[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
-    const parsed = JSON.parse(raw) as RunHistoryEntry[];
-    return Array.isArray(parsed) ? parsed : [];
+    const parsed = JSON.parse(raw) as Partial<RunHistoryEntry>[];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((e) => normalizeEntry(e));
   } catch {
     return [];
   }
@@ -74,6 +143,8 @@ export function appendRunHistory(
     faithfulnessScore: entry.faithfulnessScore,
     agents: entry.agents,
     chunkDocCount: entry.chunkDocCount,
+    playbookFlagCount: entry.playbookFlagCount,
+    riskBand: entry.riskBand,
   };
   const prev = loadRunHistory();
   const next = [full, ...prev].slice(0, MAX_ENTRIES);
@@ -100,7 +171,7 @@ export function stateToRunSummary(
           | undefined;
   const log = state.status_log;
   const chunks = state.chunks_by_document;
-  return {
+  const summary = {
     threadId,
     query: query.slice(0, 480),
     documentIds,
@@ -111,5 +182,8 @@ export function stateToRunSummary(
         : null,
     agents: uniqueAgentsFromLog(log),
     chunkDocCount: totalChunkCount(chunks),
+    playbookFlagCount: playbookFlagCountFromState(state),
+    riskBand: riskBandFromState(state),
   };
+  return summary;
 }

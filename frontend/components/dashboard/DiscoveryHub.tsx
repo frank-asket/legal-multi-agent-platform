@@ -11,21 +11,38 @@ import {
   ExternalLink,
   Radio,
   Search,
+  Sparkles,
   XCircle,
 } from "lucide-react";
 import { apiDocsUrl, getApiBase } from "@/lib/api";
-import { loadRunHistory, type RunHistoryEntry } from "@/lib/run-history";
+import { loadRunHistory, type RiskBand, type RunHistoryEntry } from "@/lib/run-history";
+import { AgentProgressRail } from "./AgentProgressRail";
+import { useDashboardShell } from "./DashboardShellContext";
 
 type ReadyState = { ok: boolean; openrouter: boolean | null; error: string | null };
 
-export function DashboardMetrics() {
+function riskLabel(band: RiskBand): string {
+  if (band === "high") return "Elevated";
+  if (band === "medium") return "Watch";
+  return "Stable";
+}
+
+function riskStyles(band: RiskBand): string {
+  if (band === "high") return "bg-red-100 text-red-900 ring-red-200";
+  if (band === "medium") return "bg-amber-100 text-amber-900 ring-amber-200";
+  return "bg-emerald-100 text-emerald-900 ring-emerald-200";
+}
+
+export function DiscoveryHub() {
+  const { setReviewMode } = useDashboardShell();
   const [ready, setReady] = useState<ReadyState>({
     ok: false,
     openrouter: null,
     error: null,
   });
   const [history, setHistory] = useState<RunHistoryEntry[]>([]);
-  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
+  const [ask, setAsk] = useState("");
 
   const refreshHistory = useCallback(() => {
     setHistory(loadRunHistory());
@@ -88,7 +105,7 @@ export function DashboardMetrics() {
   const last = history[0];
   const grounded = history.filter((x) => x.faithful === true).length;
   const review = history.filter((x) => x.faithful === false).length;
-  const q = search.trim().toLowerCase();
+  const q = filter.trim().toLowerCase();
   const filtered = q
     ? history.filter(
         (e) =>
@@ -98,19 +115,73 @@ export function DashboardMetrics() {
       )
     : history;
 
+  const submitAsk = () => {
+    const text = ask.trim();
+    if (!text) {
+      window.location.hash = "consultation";
+      return;
+    }
+    window.dispatchEvent(
+      new CustomEvent("legal-platform-prefill-query", {
+        detail: { query: text },
+      }),
+    );
+    setAsk("");
+    window.location.hash = "consultation";
+  };
+
+  const openMatterReview = (e: RunHistoryEntry) => {
+    setReviewMode(true);
+    window.dispatchEvent(
+      new CustomEvent("legal-platform-prefill-query", {
+        detail: {
+          query: e.query,
+          documentIds: e.documentIds.join(", "),
+        },
+      }),
+    );
+    window.location.hash = "consultation";
+  };
+
   return (
-    <div className="mx-auto max-w-[1400px] space-y-6 px-4 pb-6 pt-16 sm:px-5 md:px-8 lg:pt-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="relative w-full max-w-xl lg:max-w-md">
+    <div className="min-w-0 space-y-6 pb-6 pt-14 lg:pt-6">
+      <div className="relative rounded-2xl border border-slate-200/90 bg-white p-1 shadow-sm ring-1 ring-slate-100/80">
+        <Sparkles
+          className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#0c0f14]/40 sm:left-5"
+          aria-hidden
+        />
+        <input
+          type="text"
+          value={ask}
+          onChange={(e) => setAsk(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && submitAsk()}
+          placeholder='Audit this for hiring restrictions...'
+          className="w-full rounded-xl border-0 bg-transparent py-4 pl-12 pr-28 text-sm text-[#0c0f14] outline-none placeholder:text-slate-400 sm:pl-14 sm:text-[15px]"
+          aria-label="Ask the legal assistant"
+        />
+        <button
+          type="button"
+          onClick={submitAsk}
+          className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center gap-1.5 rounded-full bg-[#0c0f14] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-md transition hover:bg-slate-800"
+        >
+          Run
+          <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+        </button>
+      </div>
+
+      <AgentProgressRail />
+
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full max-w-xl">
           <Search
             className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
             aria-hidden
           />
           <input
             type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Filter recent runs…"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            placeholder="Filter matter runs…"
             className="w-full rounded-full border border-slate-200/90 bg-white py-2.5 pl-10 pr-4 text-sm text-[#0c0f14] shadow-sm outline-none ring-[#0c0f14]/15 focus:ring-2"
             aria-label="Filter recent runs"
           />
@@ -120,7 +191,7 @@ export function DashboardMetrics() {
             href="#consultation"
             className="inline-flex items-center gap-2 rounded-full bg-[#0c0f14] px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-md transition hover:bg-slate-800"
           >
-            Open agent console
+            Agent console
             <ArrowRight className="h-3.5 w-3.5" aria-hidden />
           </Link>
           <a
@@ -225,6 +296,47 @@ export function DashboardMetrics() {
         </p>
       )}
 
+      <section aria-labelledby="active-matters-heading">
+        <h2 id="active-matters-heading" className="text-sm font-semibold text-[#0c0f14]">
+          Active matters
+        </h2>
+        <p className="mt-1 text-xs text-slate-500">
+          Recent runs as matter cards — risk is heuristic from playbook flags and auditor (not legal advice).
+        </p>
+        {history.length === 0 ? (
+          <p className="mt-4 text-sm text-slate-500">
+            Complete a query to populate matters. Cards open review mode with your document IDs prefilled.
+          </p>
+        ) : (
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+            {history.slice(0, 6).map((e) => (
+              <li key={e.id}>
+                <button
+                  type="button"
+                  onClick={() => openMatterReview(e)}
+                  className="flex w-full flex-col rounded-2xl border border-slate-100 bg-white p-4 text-left shadow-sm ring-1 ring-slate-100/80 transition hover:border-slate-200 hover:shadow-md"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="line-clamp-2 min-w-0 text-sm font-medium text-[#0c0f14]">{e.query || "—"}</p>
+                    <span
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ring-1 ${riskStyles(e.riskBand)}`}
+                    >
+                      {riskLabel(e.riskBand)}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-[11px] text-slate-500">
+                    {new Date(e.at).toLocaleString()} · {e.documentIds.join(", ") || "—"}
+                  </p>
+                  {e.agents.length > 0 ? (
+                    <p className="mt-1 text-[11px] text-slate-600">Trail: {e.agents.join(" → ")}</p>
+                  ) : null}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <section
         className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm"
         aria-labelledby="recent-runs-heading"
@@ -255,13 +367,18 @@ export function DashboardMetrics() {
                     <p className="mt-0.5 text-[11px] text-slate-600">Trail: {e.agents.join(" → ")}</p>
                   )}
                 </div>
-                <div className="flex shrink-0 items-center gap-2">
+                <div className="flex shrink-0 flex-wrap items-center gap-2">
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1 ${riskStyles(e.riskBand)}`}
+                  >
+                    {riskLabel(e.riskBand)}
+                  </span>
                   {e.faithful === true ? (
-                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-900">
+                    <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-900 ring-1 ring-emerald-100">
                       Grounded
                     </span>
                   ) : e.faithful === false ? (
-                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-900">
+                    <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-900 ring-1 ring-amber-100">
                       Review
                     </span>
                   ) : null}
@@ -284,14 +401,40 @@ export function DashboardMetrics() {
           {["Librarian", "Researcher", "Counsel", "Auditor"].map((label, i) => (
             <li key={label} className="flex items-center gap-2">
               {i > 0 ? <span className="text-slate-400">→</span> : null}
-              <span className="rounded-full bg-white px-3 py-1.5 shadow-sm ring-1 ring-slate-100">
-                {label}
-              </span>
+              <span className="rounded-full bg-white px-3 py-1.5 shadow-sm ring-1 ring-slate-100">{label}</span>
             </li>
           ))}
         </ol>
         <p className="mt-3 text-[11px] text-slate-500">
           The auditor may route back to retrieval until retries are exhausted (see README architecture).
+        </p>
+      </section>
+
+      <section
+        id="archive-placeholder"
+        className="scroll-mt-28 rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-6"
+        aria-labelledby="archive-heading"
+      >
+        <h2 id="archive-heading" className="text-sm font-semibold text-[#0c0f14]">
+          Archive
+        </h2>
+        <p className="mt-2 text-sm text-slate-600">
+          Closed matters will land here with retention policy controls once matter lifecycle APIs exist (shared team vault
+          in Clerk orgs is on the roadmap).
+        </p>
+      </section>
+
+      <section
+        id="shared-placeholder"
+        className="scroll-mt-28 rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-6"
+        aria-labelledby="shared-heading"
+      >
+        <h2 id="shared-heading" className="text-sm font-semibold text-[#0c0f14]">
+          Shared with team
+        </h2>
+        <p className="mt-2 text-sm text-slate-600">
+          Organization vaults will let collaborators reuse uploaded bundles without re-ingestion. Today, document IDs
+          are manual — wire shared storage and ACLs to activate this workspace.
         </p>
       </section>
 

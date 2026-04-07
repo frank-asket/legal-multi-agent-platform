@@ -4,17 +4,27 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Activity,
+  Archive,
   CreditCard,
   LayoutDashboard,
   Mail,
   Menu,
   MessageCircle,
   Scale,
+  Users,
   X,
 } from "lucide-react";
 import { useState } from "react";
+import { useDashboardShell } from "./DashboardShellContext";
+import { regionLabel } from "@/lib/jurisdiction";
 
 type NavIcon = typeof LayoutDashboard;
+
+const workspaceItems: { href: string; label: string; icon: NavIcon }[] = [
+  { href: "/dashboard", label: "Current matters", icon: LayoutDashboard },
+  { href: "/dashboard#archive-placeholder", label: "Archive", icon: Archive },
+  { href: "/dashboard#shared-placeholder", label: "Shared with team", icon: Users },
+];
 
 const navItems: {
   href: string;
@@ -22,7 +32,6 @@ const navItems: {
   icon: NavIcon;
   match?: "dashboard-home" | "account";
 }[] = [
-  { href: "/dashboard", label: "Home", icon: LayoutDashboard, match: "dashboard-home" },
   { href: "/dashboard#consultation", label: "Agent console", icon: MessageCircle },
   { href: "/dashboard#recent-runs-heading", label: "Recent runs", icon: Activity },
   { href: "/dashboard#dashboard-contact", label: "Contact", icon: Mail },
@@ -60,19 +69,26 @@ function NavLink({
 
 function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
+  const { jurisdictionMode, localRegion } = useDashboardShell();
 
   const linkActive = (item: (typeof navItems)[number]) => {
     if (item.match === "account") return pathname.startsWith("/account");
-    if (item.match === "dashboard-home")
-      return pathname === "/dashboard" || pathname === "/dashboard/";
     return false;
   };
+
+  const workspaceActive = (href: string) =>
+    href === "/dashboard" && (pathname === "/dashboard" || pathname === "/dashboard/");
+
+  const pinLabel =
+    jurisdictionMode === "international"
+      ? "International"
+      : regionLabel(localRegion);
 
   return (
     <>
       <Link
         href="/dashboard"
-        className="mb-8 flex items-center gap-2 px-2"
+        className="mb-6 flex items-center gap-2 px-2"
         onClick={onNavigate}
       >
         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0c0f14] text-white shadow-sm">
@@ -82,6 +98,24 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           LEGAL INTEL
         </span>
       </Link>
+      <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+        Workspaces
+      </p>
+      <nav className="mb-4 flex flex-col gap-0.5" aria-label="Workspaces">
+        {workspaceItems.map((item) => (
+          <NavLink
+            key={item.href + item.label}
+            href={item.href}
+            label={item.label}
+            Icon={item.icon}
+            active={workspaceActive(item.href)}
+            onClick={onNavigate}
+          />
+        ))}
+      </nav>
+      <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+        Navigate
+      </p>
       <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto" aria-label="Dashboard">
         {navItems.map((item) => (
           <NavLink
@@ -94,6 +128,21 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           />
         ))}
       </nav>
+      <div
+        className="mt-auto border-t border-slate-100 pt-4 text-[11px] text-slate-600"
+        id="jurisdiction-pin"
+      >
+        <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          Jurisdiction pin
+        </p>
+        <p className="mt-2 rounded-xl bg-slate-50 px-3 py-2 font-medium text-[#0c0f14] ring-1 ring-slate-100">
+          {jurisdictionMode === "international" ? "🌐 " : "📍 "}
+          {pinLabel}
+        </p>
+        <p className="mt-2 px-2 text-[10px] leading-relaxed text-slate-500">
+          Change in the header — feeds and watchdog copy follow this pin.
+        </p>
+      </div>
     </>
   );
 }
