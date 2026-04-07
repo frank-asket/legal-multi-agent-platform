@@ -155,14 +155,14 @@ export function DashboardChatbot() {
     <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2 sm:bottom-6 sm:right-6">
       {open && !minimized ? (
         <div
-          className="flex h-[min(32rem,calc(100vh-6rem))] w-[min(100vw-2rem,22rem)] sm:w-[24rem] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/15"
+          className="flex h-[min(32rem,calc(100vh-6rem))] w-[min(100vw-2rem,22rem)] sm:w-[24rem] flex-col overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-900 shadow-2xl shadow-[0_0_40px_rgba(0,255,0,0.12)]"
           role="dialog"
           aria-label="Legal desk chat"
         >
-          <div className="flex items-center justify-between border-b border-slate-100 bg-[#0c0f14] px-3 py-2.5 text-white">
+          <div className="flex items-center justify-between border-b border-zinc-700 bg-black px-3 py-2.5 text-white">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 opacity-90" aria-hidden />
-              <span className="text-xs font-bold tracking-wide">QUICK DESK</span>
+              <Sparkles className="h-4 w-4 text-[#00FF00]" aria-hidden />
+              <span className="text-xs font-bold tracking-wide text-[#00FF00]">QUICK DESK</span>
             </div>
             <div className="flex items-center gap-1">
               <button
@@ -185,27 +185,27 @@ export function DashboardChatbot() {
           </div>
           <div
             ref={listRef}
-            className="flex-1 space-y-3 overflow-y-auto px-3 py-3 text-sm"
+            className="flex-1 space-y-3 overflow-y-auto bg-zinc-950/80 px-3 py-3 text-sm"
           >
             {messages.map((m) => (
               <div
                 key={m.id}
                 className={`rounded-xl px-3 py-2 ${
                   m.role === "user"
-                    ? "ml-6 bg-[#0c0f14] text-white"
+                    ? "ml-6 bg-[#00FF00] text-black"
                     : m.role === "system"
-                      ? "bg-slate-100 text-slate-600 text-xs"
-                      : "mr-4 bg-slate-50 text-[#0c0f14] ring-1 ring-slate-100"
+                      ? "bg-zinc-800/80 text-zinc-400 text-xs"
+                      : "mr-4 border border-zinc-700 bg-zinc-900 text-zinc-100"
                 }`}
               >
                 <p className="whitespace-pre-wrap">{m.text}</p>
               </div>
             ))}
             {status ? (
-              <p className="text-xs italic text-slate-500">{status}</p>
+              <p className="text-xs italic text-zinc-500">{status}</p>
             ) : null}
           </div>
-          <div className="border-t border-slate-100 p-2">
+          <div className="border-t border-zinc-700 bg-black p-2">
             <label className="sr-only" htmlFor="chatbot-docs">
               Document IDs
             </label>
@@ -213,7 +213,7 @@ export function DashboardChatbot() {
               id="chatbot-docs"
               value={docIds}
               onChange={(e) => setDocIds(e.target.value)}
-              className="mb-2 w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs text-[#0c0f14] outline-none focus:ring-2 focus:ring-[#0c0f14]/20"
+              className="mb-2 w-full rounded-lg border border-zinc-600 bg-zinc-900 px-2 py-1.5 text-xs text-white outline-none placeholder:text-zinc-500 focus:ring-2 focus:ring-[#00FF00]/30"
               placeholder="File references (comma-separated, as registered)"
             />
             <div className="flex gap-2">
@@ -221,7 +221,7 @@ export function DashboardChatbot() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && send()}
-                className="min-w-0 flex-1 rounded-full border border-slate-200 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#0c0f14]/20"
+                className="min-w-0 flex-1 rounded-full border border-zinc-600 bg-zinc-900 px-3 py-2 text-sm text-white outline-none placeholder:text-zinc-500 focus:ring-2 focus:ring-[#00FF00]/30"
                 placeholder="Ask in plain language…"
                 disabled={busy}
                 aria-label="Message"
@@ -230,7 +230,7 @@ export function DashboardChatbot() {
                 type="button"
                 onClick={send}
                 disabled={busy || !input.trim()}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0c0f14] text-white shadow-md transition hover:bg-slate-800 disabled:opacity-40"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#00FF00] text-black shadow-[0_0_16px_rgba(0,255,0,0.35)] transition hover:bg-[#33ff33] disabled:opacity-40"
                 aria-label="Send"
               >
                 <Send className="h-4 w-4" />
@@ -244,7 +244,7 @@ export function DashboardChatbot() {
         <button
           type="button"
           onClick={() => setMinimized(false)}
-          className="flex items-center gap-2 rounded-full bg-[#0c0f14] px-4 py-2.5 text-xs font-semibold text-white shadow-lg"
+          className="flex items-center gap-2 rounded-full bg-[#00FF00] px-4 py-2.5 text-xs font-semibold text-black shadow-[0_0_24px_rgba(0,255,0,0.35)]"
         >
           <MessageCircle className="h-4 w-4" />
           Quick desk
@@ -258,7 +258,7 @@ export function DashboardChatbot() {
             setOpen(true);
             setMinimized(false);
           }}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-[#0c0f14] text-white shadow-xl shadow-slate-900/25 transition hover:bg-slate-800"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-[#00FF00] text-black shadow-[0_0_32px_rgba(0,255,0,0.4)] transition hover:bg-[#33ff33]"
           aria-label="Open quick desk"
         >
           <MessageCircle className="h-6 w-6" aria-hidden />

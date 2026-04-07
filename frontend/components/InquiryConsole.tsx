@@ -94,8 +94,13 @@ function defaultThread(): string {
   return `ui-${id}`;
 }
 
-export function InquiryConsole() {
+export function InquiryConsole({
+  variant = "default",
+}: {
+  variant?: "default" | "zyra";
+} = {}) {
   const reduce = useReducedMotion();
+  const zyra = variant === "zyra";
   const [serviceId, setServiceId] = useState(SERVICES[0].id);
   const [depthId, setDepthId] = useState(DEPTH[1].id);
   const [threadId, setThreadId] = useState("");
@@ -180,79 +185,121 @@ export function InquiryConsole() {
     }
   }, []);
 
-  const renderOutcome = useCallback((state: Record<string, unknown>) => {
-    const analyst = state.analyst_answer as
-      | { plain_english?: string; cited_spans?: Record<string, unknown>[] }
-      | undefined;
-    const verdict = state.auditor_verdict as
-      | {
-          faithful?: boolean;
-          faithfulness_score?: number;
-          notes?: string;
-          unsupported_segments?: string[];
+  const renderOutcome = useCallback(
+    (state: Record<string, unknown>) => {
+      const z = variant === "zyra";
+      const analyst = state.analyst_answer as
+        | { plain_english?: string; cited_spans?: Record<string, unknown>[] }
+        | undefined;
+      const verdict = state.auditor_verdict as
+        | {
+            faithful?: boolean;
+            faithfulness_score?: number;
+            notes?: string;
+            unsupported_segments?: string[];
+          }
+        | undefined;
+      const flags = (state.playbook_flags as Record<string, unknown>[]) || [];
+      const errors = (state.errors as string[]) || [];
+      const chunks = state.chunks_by_document;
+
+      const plain = analyst?.plain_english || "";
+      const spans = analyst?.cited_spans || [];
+      const faithful = !!verdict?.faithful;
+      const score =
+        typeof verdict?.faithfulness_score === "number"
+          ? verdict.faithfulness_score
+          : null;
+
+      let html = `<div class="space-y-6">`;
+
+      html += `<div class="flex flex-wrap gap-2">`;
+      html += `<span class="rounded-full px-3 py-1 text-xs font-semibold ${
+        faithful
+          ? z
+            ? "bg-emerald-500/20 text-emerald-300"
+            : "bg-emerald-100 text-emerald-800"
+          : z
+            ? "bg-red-500/25 text-red-300"
+            : "bg-red-100 text-red-800"
+      }">${faithful ? "Source check: aligned with instrument" : "Source check: counsel should verify"}</span>`;
+      if (score !== null) {
+        html += `<span class="rounded-full px-3 py-1 text-xs font-medium ${
+          z ? "bg-zinc-800 text-zinc-300" : "bg-slate-100 text-slate-600"
+        }">Faithfulness ${Math.round(score * 100)}%</span>`;
+      }
+      html += `</div>`;
+
+      if (plain) {
+        html += `<p class="text-lg leading-relaxed ${
+          z ? "text-white" : "text-[#0c0f14]"
+        }" style="font-family:Georgia, 'Times New Roman', serif">${escapeHtml(plain)}</p>`;
+      }
+
+      if (spans.length) {
+        html += `<h3 class="text-sm font-semibold uppercase tracking-wide ${
+          z ? "text-zinc-500" : "text-slate-500"
+        }">Citations</h3><div class="space-y-3">`;
+        for (const s of spans) {
+          const pdf = s.pdf as { page_number?: number } | undefined;
+          const ref = `${String(s.source_id ?? "")} · ${String(s.document_id ?? "")} · p.${pdf?.page_number ?? "?"}`;
+          html += `<blockquote class="border-l-4 pl-4 py-3 text-sm ${
+            z
+              ? "border-[#00FF00] bg-zinc-800/60"
+              : "border-[#0c0f14] bg-slate-50"
+          }"><div class="text-xs font-medium ${
+            z ? "text-zinc-400" : "text-slate-500"
+          }">${escapeHtml(ref)}</div><div class="mt-1 ${
+            z ? "text-zinc-200" : "text-slate-700"
+          }">${escapeHtml(String(s.text_excerpt ?? ""))}</div></blockquote>`;
         }
-      | undefined;
-    const flags = (state.playbook_flags as Record<string, unknown>[]) || [];
-    const errors = (state.errors as string[]) || [];
-    const chunks = state.chunks_by_document;
-
-    const plain = analyst?.plain_english || "";
-    const spans = analyst?.cited_spans || [];
-    const faithful = !!verdict?.faithful;
-    const score =
-      typeof verdict?.faithfulness_score === "number"
-        ? verdict.faithfulness_score
-        : null;
-
-    let html = `<div class="space-y-6">`;
-
-    html += `<div class="flex flex-wrap gap-2">`;
-    html += `<span class="rounded-full px-3 py-1 text-xs font-semibold ${
-      faithful ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"
-    }">${faithful ? "Source check: aligned with instrument" : "Source check: counsel should verify"}</span>`;
-    if (score !== null) {
-      html += `<span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">Faithfulness ${Math.round(score * 100)}%</span>`;
-    }
-    html += `</div>`;
-
-    if (plain) {
-      html += `<p class="text-lg leading-relaxed text-[#0c0f14]" style="font-family:Georgia, 'Times New Roman', serif">${escapeHtml(plain)}</p>`;
-    }
-
-    if (spans.length) {
-      html += `<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Citations</h3><div class="space-y-3">`;
-      for (const s of spans) {
-        const pdf = s.pdf as { page_number?: number } | undefined;
-        const ref = `${String(s.source_id ?? "")} · ${String(s.document_id ?? "")} · p.${pdf?.page_number ?? "?"}`;
-        html += `<blockquote class="border-l-4 border-[#0c0f14] bg-slate-50 pl-4 py-3 text-sm"><div class="text-xs font-medium text-slate-500">${escapeHtml(ref)}</div><div class="mt-1 text-slate-700">${escapeHtml(String(s.text_excerpt ?? ""))}</div></blockquote>`;
+        html += `</div>`;
       }
-      html += `</div>`;
-    }
 
-    if (flags.length) {
-      html += `<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Clause checklist</h3><div class="space-y-2">`;
-      for (const f of flags) {
-        const sev = String(f.severity ?? "low");
-        html += `<div class="rounded-xl border border-slate-200 p-3 text-sm"><div class="font-semibold">${escapeHtml(String(f.label ?? f.rule_id ?? "Flag"))} <span class="text-slate-500">(${escapeHtml(sev)})</span></div><div class="text-slate-600">${escapeHtml(String(f.rationale ?? ""))}</div></div>`;
+      if (flags.length) {
+        html += `<h3 class="text-sm font-semibold uppercase tracking-wide ${
+          z ? "text-zinc-500" : "text-slate-500"
+        }">Clause checklist</h3><div class="space-y-2">`;
+        for (const f of flags) {
+          const sev = String(f.severity ?? "low");
+          html += `<div class="rounded-xl border p-3 text-sm ${
+            z
+              ? "border-zinc-600 bg-zinc-800/50"
+              : "border-slate-200"
+          }"><div class="font-semibold ${z ? "text-white" : ""}">${escapeHtml(String(f.label ?? f.rule_id ?? "Flag"))} <span class="${
+            z ? "text-zinc-500" : "text-slate-500"
+          }">(${escapeHtml(sev)})</span></div><div class="${
+            z ? "text-zinc-400" : "text-slate-600"
+          }">${escapeHtml(String(f.rationale ?? ""))}</div></div>`;
+        }
+        html += `</div>`;
       }
+
+      if (verdict?.notes) {
+        html += `<h3 class="text-sm font-semibold uppercase tracking-wide ${
+          z ? "text-zinc-500" : "text-slate-500"
+        }">Review notes</h3><p class="text-sm ${z ? "text-zinc-400" : "text-slate-600"}">${escapeHtml(verdict.notes)}</p>`;
+      }
+
+      if (chunks && typeof chunks === "object") {
+        html += `<h3 class="text-sm font-semibold uppercase tracking-wide ${
+          z ? "text-zinc-500" : "text-slate-500"
+        }">Indexed passages (technical)</h3><pre class="overflow-x-auto rounded-lg p-3 text-xs ${
+          z ? "bg-zinc-950 text-zinc-400" : "bg-slate-50 text-slate-600"
+        }">${escapeHtml(JSON.stringify(chunks, null, 2))}</pre>`;
+      }
+
+      if (errors.length) {
+        html += `<div class="rounded-lg p-3 text-sm ${
+          z ? "bg-red-950/50 text-red-300" : "bg-red-50 text-red-800"
+        }">${escapeHtml(errors.join(" · "))}</div>`;
+      }
+
       html += `</div>`;
-    }
-
-    if (verdict?.notes) {
-      html += `<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Review notes</h3><p class="text-sm text-slate-600">${escapeHtml(verdict.notes)}</p>`;
-    }
-
-    if (chunks && typeof chunks === "object") {
-      html += `<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Indexed passages (technical)</h3><pre class="overflow-x-auto rounded-lg bg-slate-50 p-3 text-xs text-slate-600">${escapeHtml(JSON.stringify(chunks, null, 2))}</pre>`;
-    }
-
-    if (errors.length) {
-      html += `<div class="rounded-lg bg-red-50 p-3 text-sm text-red-800">${escapeHtml(errors.join(" · "))}</div>`;
-    }
-
-    html += `</div>`;
-    setOutcomeHtml(html);
-  }, []);
+      setOutcomeHtml(html);
+    },
+    [variant],
+  );
 
   const clearPanels = useCallback(() => {
     setTimeline([]);
@@ -474,25 +521,51 @@ export function InquiryConsole() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: reduce ? 0 : 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="scroll-mt-24 rounded-2xl border border-slate-100 bg-white/90 p-6 shadow-sm ring-1 ring-slate-100/80 sm:p-8 md:rounded-3xl md:p-10"
+      className={
+        zyra
+          ? "scroll-mt-24 rounded-2xl border border-zinc-700/80 bg-zinc-900/95 p-6 shadow-[0_0_60px_rgba(0,255,0,0.07)] ring-1 ring-zinc-700/50 sm:p-8 md:rounded-3xl md:p-10"
+          : "scroll-mt-24 rounded-2xl border border-slate-100 bg-white/90 p-6 shadow-sm ring-1 ring-slate-100/80 sm:p-8 md:rounded-3xl md:p-10"
+      }
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700/90">
+          <p
+            className={
+              zyra
+                ? "text-xs font-semibold uppercase tracking-wide text-[#00FF00]"
+                : "text-xs font-semibold uppercase tracking-wide text-emerald-700/90"
+            }
+          >
             Demo — no account required
           </p>
-          <h2 className="mt-1 max-w-xl text-2xl font-semibold leading-tight text-[#0c0f14] sm:text-[1.65rem] md:text-3xl">
+          <h2
+            className={`mt-1 max-w-xl text-2xl font-semibold leading-tight sm:text-[1.65rem] md:text-3xl ${
+              zyra ? "text-white" : "text-[#0c0f14]"
+            }`}
+          >
             Put your question to the desk
           </h2>
         </div>
-        <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-medium text-slate-600">
-          <Layers className="h-3.5 w-3.5 text-slate-400" aria-hidden />
+        <span
+          className={
+            zyra
+              ? "inline-flex items-center gap-1.5 self-start rounded-full border border-zinc-600 bg-zinc-800/80 px-3 py-1.5 text-[11px] font-medium text-zinc-300"
+              : "inline-flex items-center gap-1.5 self-start rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-medium text-slate-600"
+          }
+        >
+          <Layers className={zyra ? "h-3.5 w-3.5 text-zinc-500" : "h-3.5 w-3.5 text-slate-400"} aria-hidden />
           Style:{" "}
-          <strong className="font-semibold text-[#0c0f14]">{depthLabel}</strong>
-          <span className="text-slate-400">(preference)</span>
+          <strong className={zyra ? "font-semibold text-white" : "font-semibold text-[#0c0f14]"}>{depthLabel}</strong>
+          <span className={zyra ? "text-zinc-500" : "text-slate-400"}>(preference)</span>
         </span>
       </div>
-      <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600">
+      <p
+        className={
+          zyra
+            ? "mt-3 max-w-2xl text-sm leading-relaxed text-zinc-400"
+            : "mt-3 max-w-2xl text-sm leading-relaxed text-slate-600"
+        }
+      >
         Pick the type of review, write in plain language or use a suggested prompt,
         then run the desk. You will see a readable summary with citations into the
         instrument — a drafting aid and checklist, not a substitute for regulated
@@ -500,7 +573,13 @@ export function InquiryConsole() {
       </p>
 
       <div className="mt-8">
-        <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <p
+          className={
+            zyra
+              ? "inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-zinc-500"
+              : "inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500"
+          }
+        >
           <Target className="h-3.5 w-3.5" aria-hidden />
           What do you need?
         </p>
@@ -508,6 +587,7 @@ export function InquiryConsole() {
           {SERVICES.map((s) => (
             <TagPill
               key={s.id}
+              variant={zyra ? "zyra" : "default"}
               active={serviceId === s.id}
               onClick={() => {
                 setServiceId(s.id);
@@ -521,17 +601,24 @@ export function InquiryConsole() {
       </div>
 
       <div className="mt-6">
-        <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <p
+          className={
+            zyra
+              ? "inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-zinc-500"
+              : "inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500"
+          }
+        >
           <Sparkles className="h-3.5 w-3.5" aria-hidden />
           How thorough should it be?
         </p>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className={zyra ? "mt-1 text-xs text-zinc-500" : "mt-1 text-xs text-slate-500"}>
           Adjusts how thorough the narration feels; all modes still tie answers to the source text.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           {DEPTH.map((d) => (
             <TagPill
               key={d.id}
+              variant={zyra ? "zyra" : "default"}
               title={d.hint}
               active={depthId === d.id}
               onClick={() => setDepthId(d.id)}
@@ -542,13 +629,25 @@ export function InquiryConsole() {
         </div>
       </div>
 
-      <div className="mt-8 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 sm:p-5">
+      <div
+        className={
+          zyra
+            ? "mt-8 rounded-2xl border border-zinc-700/80 bg-zinc-950/60 p-4 sm:p-5"
+            : "mt-8 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 sm:p-5"
+        }
+      >
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-600">
+          <span
+            className={
+              zyra
+                ? "inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-zinc-400"
+                : "inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-600"
+            }
+          >
             <MessageSquare className="h-3.5 w-3.5" aria-hidden />
             Your question
           </span>
-          <span className="text-[11px] text-slate-500">
+          <span className={zyra ? "text-[11px] text-zinc-500" : "text-[11px] text-slate-500"}>
             Tip: leave blank to use the suggested wording
           </span>
         </div>
@@ -557,9 +656,19 @@ export function InquiryConsole() {
           onChange={(e) => setQuestion(e.target.value)}
           placeholder={service.placeholder}
           rows={4}
-          className="mt-3 w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-3 text-[#0c0f14] text-sm outline-none ring-[#0c0f14]/0 transition focus:border-[#0c0f14]/40 focus:ring-2 focus:ring-[#0c0f14]/15 placeholder:text-slate-400"
+          className={
+            zyra
+              ? "mt-3 w-full resize-y rounded-xl border border-zinc-600 bg-zinc-900 px-3 py-3 text-sm text-white outline-none transition focus:border-[#00FF00]/50 focus:ring-2 focus:ring-[#00FF00]/20 placeholder:text-zinc-500"
+              : "mt-3 w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-3 text-[#0c0f14] text-sm outline-none ring-[#0c0f14]/0 transition focus:border-[#0c0f14]/40 focus:ring-2 focus:ring-[#0c0f14]/15 placeholder:text-slate-400"
+          }
         />
-        <p className="mt-3 text-xs font-medium uppercase tracking-wide text-slate-500">
+        <p
+          className={
+            zyra
+              ? "mt-3 text-xs font-medium uppercase tracking-wide text-zinc-500"
+              : "mt-3 text-xs font-medium uppercase tracking-wide text-slate-500"
+          }
+        >
           Try an example
         </p>
         <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
@@ -568,7 +677,11 @@ export function InquiryConsole() {
               key={ex}
               type="button"
               onClick={() => setQuestion(ex)}
-              className="rounded-full border border-slate-200 bg-white px-3 py-2 text-left text-xs leading-snug text-[#0c0f14] transition hover:border-slate-400 hover:shadow-sm sm:max-w-[280px]"
+              className={
+                zyra
+                  ? "rounded-full border border-zinc-600 bg-zinc-800/80 px-3 py-2 text-left text-xs leading-snug text-zinc-200 transition hover:border-[#00FF00]/40 sm:max-w-[280px]"
+                  : "rounded-full border border-slate-200 bg-white px-3 py-2 text-left text-xs leading-snug text-[#0c0f14] transition hover:border-slate-400 hover:shadow-sm sm:max-w-[280px]"
+              }
             >
               {ex}
             </button>
@@ -577,7 +690,13 @@ export function InquiryConsole() {
       </div>
 
       <div className="mt-6">
-        <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-500">
+        <span
+          className={
+            zyra
+              ? "inline-flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-zinc-500"
+              : "inline-flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-500"
+          }
+        >
           <FileJson2 className="h-3.5 w-3.5" aria-hidden />
           Extra context (optional)
         </span>
@@ -586,7 +705,11 @@ export function InquiryConsole() {
           onChange={(e) => setDetails(e.target.value)}
           placeholder="Dates, party names, treaty context, or negotiation history — combined with your question."
           rows={2}
-          className="mt-2 w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-[#0c0f14] outline-none transition focus:border-[#0c0f14]/40 focus:ring-2 focus:ring-[#0c0f14]/15 placeholder:text-slate-400"
+          className={
+            zyra
+              ? "mt-2 w-full resize-y rounded-xl border border-zinc-600 bg-zinc-900 px-3 py-2 text-sm text-white outline-none transition focus:border-[#00FF00]/50 focus:ring-2 focus:ring-[#00FF00]/20 placeholder:text-zinc-500"
+              : "mt-2 w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-[#0c0f14] outline-none transition focus:border-[#0c0f14]/40 focus:ring-2 focus:ring-[#0c0f14]/15 placeholder:text-slate-400"
+          }
         />
       </div>
 
@@ -594,21 +717,32 @@ export function InquiryConsole() {
         <button
           type="button"
           onClick={() => setShowAdvanced((v) => !v)}
-          className="flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-medium text-[#0c0f14] transition hover:bg-slate-50"
+          className={
+            zyra
+              ? "flex w-full items-center justify-between gap-3 rounded-xl border border-zinc-600 bg-zinc-800/60 px-4 py-3 text-left text-sm font-medium text-white transition hover:bg-zinc-800"
+              : "flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-medium text-[#0c0f14] transition hover:bg-slate-50"
+          }
           aria-expanded={showAdvanced}
         >
           <span className="inline-flex items-center gap-2">
-            <Settings2 className="h-4 w-4 text-slate-500" aria-hidden />
+            <Settings2 className={zyra ? "h-4 w-4 text-zinc-400" : "h-4 w-4 text-slate-500"} aria-hidden />
             Connection &amp; file identifiers (optional)
           </span>
           <ChevronDown
-            className={`h-5 w-5 shrink-0 text-slate-400 transition ${showAdvanced ? "rotate-180" : ""}`}
+            className={`h-5 w-5 shrink-0 transition ${showAdvanced ? "rotate-180" : ""} ${zyra ? "text-zinc-400" : "text-slate-400"}`}
             aria-hidden
           />
         </button>
         {showAdvanced ? (
-          <div className="mt-4 space-y-6 rounded-xl border border-dashed border-slate-200 bg-slate-50/40 p-4 sm:p-5">
+          <div
+            className={
+              zyra
+                ? "mt-4 space-y-6 rounded-xl border border-dashed border-zinc-600 bg-zinc-950/50 p-4 sm:p-5"
+                : "mt-4 space-y-6 rounded-xl border border-dashed border-slate-200 bg-slate-50/40 p-4 sm:p-5"
+            }
+          >
             <UnderlineField
+              variant={zyra ? "zyra" : "default"}
               label="Your name"
               hint="Optional — not sent to the desk."
               value={yourName}
@@ -616,6 +750,7 @@ export function InquiryConsole() {
               placeholder="Jordan Smith"
             />
             <UnderlineField
+              variant={zyra ? "zyra" : "default"}
               label="Your email"
               hint="Optional"
               value={yourEmail}
@@ -623,12 +758,14 @@ export function InquiryConsole() {
               placeholder="you@company.com"
             />
             <UnderlineField
+              variant={zyra ? "zyra" : "default"}
               label="Session reference"
               hint="Used for live progress; one is created automatically if you leave this blank."
               value={threadId}
               onChange={setThreadId}
             />
             <UnderlineField
+              variant={zyra ? "zyra" : "default"}
               label="Document reference(s)"
               hint="Comma-separated identifiers for the files your organization has registered (demo uses a built-in sample)."
               value={docIdsStr}
@@ -636,15 +773,22 @@ export function InquiryConsole() {
               placeholder="demo-doc"
             />
             <UnderlineField
+              variant={zyra ? "zyra" : "default"}
               label="Access key"
               hint="If your deployment requires authentication; stored only in this browser."
               value={apiKey}
               onChange={setApiKey}
               type="password"
             />
-            <p className="text-xs leading-relaxed text-slate-500">
+            <p className={zyra ? "text-xs leading-relaxed text-zinc-500" : "text-xs leading-relaxed text-slate-500"}>
               Service endpoint:{" "}
-              <code className="rounded bg-slate-200/60 px-1 py-0.5 text-[11px]">
+              <code
+                className={
+                  zyra
+                    ? "rounded bg-zinc-800 px-1 py-0.5 text-[11px] text-zinc-300"
+                    : "rounded bg-slate-200/60 px-1 py-0.5 text-[11px]"
+                }
+              >
                 {getApiBase()}
               </code>
               . If the page cannot reach your organization&apos;s environment, contact your IT administrator.
@@ -658,7 +802,11 @@ export function InquiryConsole() {
           type="button"
           disabled={busy}
           onClick={runWebSocket}
-          className="group inline-flex items-center justify-center gap-2 rounded-full bg-[#0c0f14] px-7 py-3.5 text-xs font-bold uppercase tracking-wide text-white shadow-lg shadow-slate-900/25 transition duration-300 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-xl disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none sm:min-w-[220px]"
+          className={
+            zyra
+              ? "group inline-flex items-center justify-center gap-2 rounded-full bg-[#00FF00] px-7 py-3.5 text-xs font-bold uppercase tracking-wide text-black shadow-[0_0_28px_rgba(0,255,0,0.35)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#33ff33] disabled:pointer-events-none disabled:opacity-50 sm:min-w-[220px]"
+              : "group inline-flex items-center justify-center gap-2 rounded-full bg-[#0c0f14] px-7 py-3.5 text-xs font-bold uppercase tracking-wide text-white shadow-lg shadow-slate-900/25 transition duration-300 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-xl disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none sm:min-w-[220px]"
+          }
         >
           {busy ? (
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -674,19 +822,35 @@ export function InquiryConsole() {
           type="button"
           disabled={busy}
           onClick={runHttp}
-          className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-6 py-3.5 text-xs font-semibold uppercase tracking-wide text-slate-700 transition duration-300 hover:-translate-y-px hover:border-slate-500 hover:shadow-sm disabled:pointer-events-none disabled:opacity-50"
+          className={
+            zyra
+              ? "inline-flex items-center justify-center gap-2 rounded-full border border-zinc-500 bg-zinc-900 px-6 py-3.5 text-xs font-semibold uppercase tracking-wide text-zinc-200 transition duration-300 hover:-translate-y-px hover:border-[#00FF00]/50 hover:text-white disabled:pointer-events-none disabled:opacity-50"
+              : "inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-6 py-3.5 text-xs font-semibold uppercase tracking-wide text-slate-700 transition duration-300 hover:-translate-y-px hover:border-slate-500 hover:shadow-sm disabled:pointer-events-none disabled:opacity-50"
+          }
         >
           {busy ? (
-            <Loader2 className="h-4 w-4 animate-spin text-slate-500" aria-hidden />
+            <Loader2
+              className={zyra ? "h-4 w-4 animate-spin text-zinc-400" : "h-4 w-4 animate-spin text-slate-500"}
+              aria-hidden
+            />
           ) : (
-            <Globe className="h-4 w-4 text-slate-500" aria-hidden />
+            <Globe className={zyra ? "h-4 w-4 text-zinc-400" : "h-4 w-4 text-slate-500"} aria-hidden />
           )}
           Get answer — single pass
         </button>
       </div>
 
-      <div className="mt-4 flex gap-2 rounded-xl border border-amber-200/80 bg-amber-50/50 p-3 text-xs leading-relaxed text-amber-950/90">
-        <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" aria-hidden />
+      <div
+        className={
+          zyra
+            ? "mt-4 flex gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs leading-relaxed text-amber-200/95"
+            : "mt-4 flex gap-2 rounded-xl border border-amber-200/80 bg-amber-50/50 p-3 text-xs leading-relaxed text-amber-950/90"
+        }
+      >
+        <Info
+          className={zyra ? "mt-0.5 h-4 w-4 shrink-0 text-amber-400" : "mt-0.5 h-4 w-4 shrink-0 text-amber-700"}
+          aria-hidden
+        />
         <p>
           Outputs are informational and based on the documents you connect. They
           are not legal advice. For regulated or high-stakes matters, involve
@@ -694,34 +858,65 @@ export function InquiryConsole() {
         </p>
       </div>
 
-      <p className="mt-4 flex items-start gap-2 text-sm text-slate-600">
+      <p
+        className={
+          zyra ? "mt-4 flex items-start gap-2 text-sm text-zinc-400" : "mt-4 flex items-start gap-2 text-sm text-slate-600"
+        }
+      >
         {busy ? (
           <Loader2
-            className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-[#0c0f14]"
+            className={
+              zyra
+                ? "mt-0.5 h-4 w-4 shrink-0 animate-spin text-[#00FF00]"
+                : "mt-0.5 h-4 w-4 shrink-0 animate-spin text-[#0c0f14]"
+            }
             aria-hidden
           />
         ) : (
-          <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" aria-hidden />
+          <span
+            className={
+              zyra
+                ? "mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#00FF00] shadow-[0_0_8px_#00FF00]"
+                : "mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"
+            }
+            aria-hidden
+          />
         )}
         {status}
       </p>
 
       <div className="mt-12 grid gap-8 lg:grid-cols-2 lg:gap-10">
         <div>
-          <h3 className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-            <Bot className="h-4 w-4 text-slate-400" aria-hidden />
+          <h3
+            className={
+              zyra
+                ? "inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-zinc-500"
+                : "inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500"
+            }
+          >
+            <Bot className={zyra ? "h-4 w-4 text-zinc-500" : "h-4 w-4 text-slate-400"} aria-hidden />
             Desk progress
           </h3>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className={zyra ? "mt-1 text-xs text-zinc-500" : "mt-1 text-xs text-slate-500"}>
             Live stages as each part of the workflow advances (best with step-by-step).
           </p>
-          <ul className="mt-3 max-h-80 space-y-2 overflow-y-auto rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50/50 p-3 shadow-inner">
+          <ul
+            className={
+              zyra
+                ? "mt-3 max-h-80 space-y-2 overflow-y-auto rounded-2xl border border-zinc-700 bg-zinc-950/80 p-3 shadow-inner"
+                : "mt-3 max-h-80 space-y-2 overflow-y-auto rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50/50 p-3 shadow-inner"
+            }
+          >
             <AnimatePresence initial={false}>
               {timeline.length === 0 ? (
                 <motion.li
                   key="empty"
                   initial={false}
-                  className="rounded-xl px-3 py-6 text-center text-sm text-slate-400"
+                  className={
+                    zyra
+                      ? "rounded-xl px-3 py-6 text-center text-sm text-zinc-500"
+                      : "rounded-xl px-3 py-6 text-center text-sm text-slate-400"
+                  }
                 >
                   Run the desk with step-by-step to see progress here.
                 </motion.li>
@@ -734,12 +929,16 @@ export function InquiryConsole() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={reduce ? undefined : { opacity: 0 }}
                     transition={{ duration: reduce ? 0 : 0.25 }}
-                    className="rounded-xl border border-slate-100/80 bg-white/90 px-3 py-2.5 text-sm shadow-sm backdrop-blur-sm"
+                    className={
+                      zyra
+                        ? "rounded-xl border border-zinc-700 bg-zinc-900/90 px-3 py-2.5 text-sm shadow-sm"
+                        : "rounded-xl border border-slate-100/80 bg-white/90 px-3 py-2.5 text-sm shadow-sm backdrop-blur-sm"
+                    }
                   >
-                    <span className="font-semibold text-[#0c0f14]">
+                    <span className={zyra ? "font-semibold text-white" : "font-semibold text-[#0c0f14]"}>
                       {ev.agent} · {ev.phase}
                     </span>
-                    <p className="mt-0.5 leading-relaxed text-slate-600">
+                    <p className={zyra ? "mt-0.5 leading-relaxed text-zinc-400" : "mt-0.5 leading-relaxed text-slate-600"}>
                       {ev.detail}
                     </p>
                   </motion.li>
@@ -749,19 +948,31 @@ export function InquiryConsole() {
           </ul>
         </div>
         <div>
-          <h3 className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-            <MessageSquare className="h-4 w-4 text-slate-400" aria-hidden />
+          <h3
+            className={
+              zyra
+                ? "inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-zinc-500"
+                : "inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500"
+            }
+          >
+            <MessageSquare className={zyra ? "h-4 w-4 text-zinc-500" : "h-4 w-4 text-slate-400"} aria-hidden />
             Your answer
           </h3>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className={zyra ? "mt-1 text-xs text-zinc-500" : "mt-1 text-xs text-slate-500"}>
             Summary and citations from your documents appear here.
           </p>
           <div
-            className="mt-3 min-h-[220px] rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+            className={
+              zyra
+                ? "mt-3 min-h-[220px] rounded-2xl border border-zinc-700 bg-zinc-950/90 p-4 shadow-[inset_0_0_24px_rgba(0,255,0,0.04)] transition-shadow hover:border-zinc-600"
+                : "mt-3 min-h-[220px] rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+            }
             dangerouslySetInnerHTML={{
               __html:
                 outcomeHtml ||
-                '<p class="text-sm text-slate-500 leading-relaxed">Your answer will appear here with a plain-language summary and quotes tied to the source text. Use <strong>live updates</strong> to watch each step, or <strong>one step</strong> for a single response.</p>',
+                (zyra
+                  ? '<p class="text-sm text-zinc-500 leading-relaxed">Your answer will appear here with a plain-language summary and quotes tied to the source text. Use <strong class="text-[#00FF00]">step by step</strong> to watch each stage, or <strong class="text-[#00FF00]">single pass</strong> for one response.</p>'
+                  : '<p class="text-sm text-slate-500 leading-relaxed">Your answer will appear here with a plain-language summary and quotes tied to the source text. Use <strong>live updates</strong> to watch each step, or <strong>one step</strong> for a single response.</p>'),
             }}
           />
         </div>
