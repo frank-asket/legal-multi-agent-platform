@@ -27,8 +27,9 @@ function matchStep(agent?: string): number {
   return -1;
 }
 
-export function AgentProgressRail() {
+export function AgentProgressRail({ variant = "light" }: { variant?: "light" | "dark" } = {}) {
   const reduce = useReducedMotion();
+  const dark = variant === "dark";
   const [activeIdx, setActiveIdx] = useState<number>(-1);
   const [caption, setCaption] = useState<string>("");
 
@@ -55,11 +56,19 @@ export function AgentProgressRail() {
 
   return (
     <div
-      className="overflow-hidden rounded-xl border border-slate-200/90 bg-gradient-to-r from-slate-50 via-white to-slate-50 px-3 py-2.5 shadow-sm"
+      className={
+        dark
+          ? "overflow-hidden rounded-xl border border-white/10 bg-zinc-900/80 px-3 py-2.5"
+          : "overflow-hidden rounded-xl border border-slate-200/90 bg-gradient-to-r from-slate-50 via-white to-slate-50 px-3 py-2.5 shadow-sm"
+      }
       aria-live="polite"
     >
       <div className="flex items-center gap-2">
-        <span className="hidden shrink-0 text-[10px] font-bold uppercase tracking-wider text-slate-500 sm:inline">
+        <span
+          className={`hidden shrink-0 text-[10px] font-bold uppercase tracking-wider sm:inline ${
+            dark ? "text-white/45" : "text-slate-500"
+          }`}
+        >
           Desk stages
         </span>
         <div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto py-0.5 sm:gap-1">
@@ -74,17 +83,23 @@ export function AgentProgressRail() {
                 initial={false}
               >
                 {i > 0 ? (
-                  <span className="text-slate-300" aria-hidden>
+                  <span className={dark ? "text-white/20" : "text-slate-300"} aria-hidden>
                     →
                   </span>
                 ) : null}
                 <span
                   className={`relative whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide transition sm:px-3 sm:text-[11px] ${
                     active
-                      ? "bg-[#0c0f14] text-white shadow-md ring-2 ring-[#0c0f14]/20"
+                      ? dark
+                        ? "bg-white text-black shadow-md ring-2 ring-white/30"
+                        : "bg-[#0c0f14] text-white shadow-md ring-2 ring-[#0c0f14]/20"
                       : past
-                        ? "bg-emerald-50 text-emerald-900 ring-1 ring-emerald-200/80"
-                        : "bg-white text-slate-600 ring-1 ring-slate-100"
+                        ? dark
+                          ? "bg-white/15 text-white ring-1 ring-white/25"
+                          : "bg-slate-200/90 text-[#0c0f14] ring-1 ring-slate-300/80"
+                        : dark
+                          ? "bg-black/40 text-white/55 ring-1 ring-white/10"
+                          : "bg-white text-slate-600 ring-1 ring-slate-100"
                   }`}
                 >
                   {active && !reduce ? (
@@ -103,11 +118,14 @@ export function AgentProgressRail() {
         </div>
       </div>
       {caption ? (
-        <p className="mt-1 truncate text-[11px] text-slate-600" title={caption}>
+        <p
+          className={`mt-1 truncate text-[11px] ${dark ? "text-white/60" : "text-slate-600"}`}
+          title={caption}
+        >
           {caption}
         </p>
       ) : (
-        <p className="mt-1 text-[11px] text-slate-400">
+        <p className={`mt-1 text-[11px] ${dark ? "text-white/40" : "text-slate-400"}`}>
           Idle — run the legal desk with step-by-step to watch Intake → Research → Drafting → Quality check.
         </p>
       )}
